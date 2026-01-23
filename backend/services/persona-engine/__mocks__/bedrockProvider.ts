@@ -14,21 +14,26 @@ export interface PersonaLayer {
     cadence: 'high' | 'medium' | 'low';
     formalityLevel: number; // 1-10 scale
     preferredMetaphors: string[];
+    sentenceStructure: 'simple' | 'complex' | 'mixed';
+    vocabularyStyle: 'technical' | 'conversational' | 'academic' | 'street';
   };
   valueConstraints: {
     coreBeliefs: string[];
     avoidedTopics: string[];
     riskTolerance: 'safe' | 'moderate' | 'bold';
+    culturalAlignment: 'global' | 'bharat-first' | 'regional';
   };
   emotionalBaseline: {
     optimismLevel: number; // 1-10 scale
     authorityLevel: number; // 1-10 scale
+    enthusiasmLevel: number; // 1-10 scale
+    empathyLevel: number; // 1-10 scale
   };
 }
 
 export interface GenerationRequest {
   personaId: string;
-  platform: 'linkedin' | 'whatsapp' | 'email' | 'twitter';
+  platform: 'linkedin' | 'whatsapp' | 'email' | 'twitter' | 'instagram' | 'facebook' | 'blog';
   content: string;
   emotionSliders?: {
     urgency?: number; // 1-10
@@ -65,15 +70,20 @@ export class MockBedrockProvider {
         cadence: 'high',
         formalityLevel: 7,
         preferredMetaphors: ['cricket', 'business', 'strategy', 'hustle'],
+        sentenceStructure: 'complex',
+        vocabularyStyle: 'technical',
       },
       valueConstraints: {
         coreBeliefs: ['Hard work beats talent', 'Jugaad as innovation', 'India-first mindset'],
         avoidedTopics: ['politics', 'religion'],
         riskTolerance: 'bold',
+        culturalAlignment: 'bharat-first',
       },
       emotionalBaseline: {
         optimismLevel: 8,
         authorityLevel: 9,
+        enthusiasmLevel: 8,
+        empathyLevel: 6,
       },
     });
 
@@ -86,15 +96,20 @@ export class MockBedrockProvider {
         cadence: 'medium',
         formalityLevel: 5,
         preferredMetaphors: ['learning', 'growth', 'journey', 'building'],
+        sentenceStructure: 'mixed',
+        vocabularyStyle: 'conversational',
       },
       valueConstraints: {
         coreBeliefs: ['Knowledge sharing', 'Inclusive growth', 'Practical learning'],
         avoidedTopics: ['controversial subjects'],
         riskTolerance: 'moderate',
+        culturalAlignment: 'bharat-first',
       },
       emotionalBaseline: {
         optimismLevel: 9,
         authorityLevel: 6,
+        enthusiasmLevel: 9,
+        empathyLevel: 9,
       },
     });
 
@@ -107,15 +122,20 @@ export class MockBedrockProvider {
         cadence: 'medium',
         formalityLevel: 3,
         preferredMetaphors: ['daily life', 'friendship', 'family', 'local culture'],
+        sentenceStructure: 'simple',
+        vocabularyStyle: 'street',
       },
       valueConstraints: {
         coreBeliefs: ['Authenticity', 'Community support', 'Simple joys'],
         avoidedTopics: ['heavy business topics'],
         riskTolerance: 'safe',
+        culturalAlignment: 'regional',
       },
       emotionalBaseline: {
         optimismLevel: 8,
         authorityLevel: 4,
+        enthusiasmLevel: 7,
+        empathyLevel: 9,
       },
     });
   }
@@ -310,7 +330,7 @@ export class MockBedrockProvider {
   }
 
   // Simulate identity extraction from uploaded content
-  async extractIdentityVector(content: string, mediaType?: 'text' | 'audio' | 'image'): Promise<{
+  async extractIdentityVector(content: string, mediaType?: 'text' | 'audio' | 'image' | 'video'): Promise<{
     linguisticFingerprint: {
       cadence: string;
       hinglishRatio: number;
@@ -333,7 +353,7 @@ export class MockBedrockProvider {
         'Innovation through resourcefulness (Jugaad)',
         'Community-first approach to business',
       ],
-      visualStyle: mediaType === 'image' ? 'Vibrant/Urban Indian aesthetic' : undefined,
+      visualStyle: (mediaType === 'image' || mediaType === 'video') ? 'Vibrant/Urban Indian aesthetic' : undefined,
     };
   }
 }

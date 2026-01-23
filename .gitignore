@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# AWS CDK
+cdk.out/
+.cdk.staging/
+cdk.context.json
+
+# Build and Temp
+dist/
+build/
+*.log
+.DS_Store
