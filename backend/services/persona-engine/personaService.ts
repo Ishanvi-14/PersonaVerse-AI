@@ -94,6 +94,7 @@ export class PersonaService {
       // Use mock provider for identity extraction
       const extraction = await this.bedrockProvider.extractIdentityVector(
         request.content,
+        
         request.mediaType
       );
 
