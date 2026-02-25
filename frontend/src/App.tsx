@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Brain, Sparkles, Users, Zap } from 'lucide-react'
-import { PersonaDNAMap } from '../features/persona-dna/PersonaDNAMap'
-import { IdentityDrivenEditor } from '../components/IdentityDrivenEditor'
+import { PersonaDNAMap } from './features/persona-dna/PersonaDNAMap'
+import { IdentityDrivenEditor } from './components/IdentityDrivenEditor'
+import AdaptiveDashboard from './features/adaptive-intelligence/AdaptiveDashboard'
 import { personaService } from './services/personaService'
 import type { PersonaLayer } from '@backend/shared/persona.types'
 
 function App() {
   const [selectedPersona, setSelectedPersona] = useState<PersonaLayer | null>(null)
   const [personas, setPersonas] = useState<PersonaLayer[]>([])
-  const [activeTab, setActiveTab] = useState<'editor' | 'dna'>('editor')
+  const [activeTab, setActiveTab] = useState<'editor' | 'dna' | 'adaptive'>('editor')
 
   useEffect(() => {
     const loadPersonas = async () => {
@@ -80,6 +81,16 @@ function App() {
                   Content Editor
                 </button>
                 <button
+                  onClick={() => setActiveTab('adaptive')}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                    activeTab === 'adaptive'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Adaptive Intelligence
+                </button>
+                <button
                   onClick={() => setActiveTab('dna')}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                     activeTab === 'dna'
@@ -99,6 +110,8 @@ function App() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {activeTab === 'editor' ? (
           <IdentityDrivenEditor />
+        ) : activeTab === 'adaptive' ? (
+          <AdaptiveDashboard />
         ) : (
           <div className="space-y-8">
             <div className="text-center">

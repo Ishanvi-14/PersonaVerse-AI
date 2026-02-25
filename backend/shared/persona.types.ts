@@ -278,20 +278,3 @@ export class PersonaError extends Error {
 export type PersonaSummary = Pick<PersonaLayer, 'id' | 'name' | 'linguisticDNA' | 'emotionalBaseline'>;
 
 export type GenerationPreview = Pick<GenerationResponse, 'generatedContent' | 'personaAlignmentScore' | 'voiceDriftAlert'>;
-
-// Export all types for easy importing
-export type {
-  PersonaLayer,
-  GenerationRequest,
-  GenerationResponse,
-  AudienceReaction,
-  IdentityExtractionRequest,
-  IdentityExtractionResponse,
-  PersonaState,
-  PersonaEvolution,
-  ApiResponse,
-  UploadRequest,
-  UploadResponse,
-  LocalizationRule,
-  SystemConfig,
-};

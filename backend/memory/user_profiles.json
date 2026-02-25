@@ -1,0 +1,179 @@
+[
+  {
+    "userId": "demo_user_001",
+    "preferred_language": "english",
+    "preferred_tone": "friendly",
+    "domain_usage": {
+      "education": 3,
+      "business": 13,
+      "finance": 5,
+      "health": 1,
+      "creator": 9,
+      "government": 0
+    },
+    "previous_summaries": [
+      {
+        "timestamp": "2026-02-25T17:18:26.633Z",
+        "domain": "creator",
+        "platform": "whatsapp",
+        "engagement_score": 88,
+        "audience_profile": {
+          "language_style": "english",
+          "literacy_level": "low",
+          "communication_tone": "friendly",
+          "content_format_preference": "short",
+          "inferred_at": "2026-02-25T17:18:26.522Z",
+          "confidence": 0.65
+        }
+      },
+      {
+        "timestamp": "2026-02-25T17:15:58.075Z",
+        "domain": "business",
+        "platform": "linkedin",
+        "engagement_score": 78,
+        "audience_profile": {
+          "language_style": "english",
+          "literacy_level": "medium",
+          "communication_tone": "friendly",
+          "content_format_preference": "short",
+          "inferred_at": "2026-02-25T17:15:57.961Z",
+          "confidence": 0.65
+        }
+      },
+      {
+        "timestamp": "2024-01-15T10:30:00Z",
+        "domain": "business",
+        "platform": "linkedin",
+        "engagement_score": 85,
+        "audience_profile": {
+          "language_style": "hinglish",
+          "literacy_level": "high",
+          "communication_tone": "formal",
+          "content_format_preference": "bullet",
+          "inferred_at": "2024-01-15T10:29:55Z",
+          "confidence": 0.87
+        }
+      },
+      {
+        "timestamp": "2024-01-14T15:20:00Z",
+        "domain": "creator",
+        "platform": "instagram",
+        "engagement_score": 92,
+        "audience_profile": {
+          "language_style": "hinglish",
+          "literacy_level": "medium",
+          "communication_tone": "friendly",
+          "content_format_preference": "conversational",
+          "inferred_at": "2024-01-14T15:19:50Z",
+          "confidence": 0.91
+        }
+      },
+      {
+        "timestamp": "2024-01-13T09:15:00Z",
+        "domain": "business",
+        "platform": "whatsapp",
+        "engagement_score": 78,
+        "audience_profile": {
+          "language_style": "hinglish",
+          "literacy_level": "medium",
+          "communication_tone": "friendly",
+          "content_format_preference": "short",
+          "inferred_at": "2024-01-13T09:14:45Z",
+          "confidence": 0.82
+        }
+      }
+    ],
+    "created_at": "2024-01-01T00:00:00Z",
+    "updated_at": "2026-02-25T17:18:26.633Z"
+  },
+  {
+    "userId": "tier2_entrepreneur",
+    "preferred_language": "regional",
+    "preferred_tone": "motivational",
+    "domain_usage": {
+      "education": 8,
+      "business": 15,
+      "finance": 10,
+      "health": 2,
+      "creator": 5,
+      "government": 3
+    },
+    "previous_summaries": [
+      {
+        "timestamp": "2024-01-15T14:00:00Z",
+        "domain": "business",
+        "platform": "whatsapp",
+        "engagement_score": 88,
+        "audience_profile": {
+          "language_style": "regional",
+          "literacy_level": "medium",
+          "communication_tone": "motivational",
+          "content_format_preference": "story",
+          "inferred_at": "2024-01-15T13:59:50Z",
+          "confidence": 0.89
+        }
+      },
+      {
+        "timestamp": "2024-01-14T11:30:00Z",
+        "domain": "finance",
+        "platform": "whatsapp",
+        "engagement_score": 82,
+        "audience_profile": {
+          "language_style": "regional",
+          "literacy_level": "medium",
+          "communication_tone": "friendly",
+          "content_format_preference": "conversational",
+          "inferred_at": "2024-01-14T11:29:45Z",
+          "confidence": 0.85
+        }
+      }
+    ],
+    "created_at": "2024-01-05T00:00:00Z",
+    "updated_at": "2024-01-15T14:00:00Z"
+  },
+  {
+    "userId": "educator_bharat",
+    "preferred_language": "hinglish",
+    "preferred_tone": "authoritative",
+    "domain_usage": {
+      "education": 25,
+      "business": 3,
+      "finance": 1,
+      "health": 5,
+      "creator": 10,
+      "government": 2
+    },
+    "previous_summaries": [
+      {
+        "timestamp": "2024-01-15T16:45:00Z",
+        "domain": "education",
+        "platform": "linkedin",
+        "engagement_score": 90,
+        "audience_profile": {
+          "language_style": "hinglish",
+          "literacy_level": "high",
+          "communication_tone": "authoritative",
+          "content_format_preference": "bullet",
+          "inferred_at": "2024-01-15T16:44:50Z",
+          "confidence": 0.93
+        }
+      },
+      {
+        "timestamp": "2024-01-15T12:00:00Z",
+        "domain": "education",
+        "platform": "twitter",
+        "engagement_score": 86,
+        "audience_profile": {
+          "language_style": "hinglish",
+          "literacy_level": "medium",
+          "communication_tone": "friendly",
+          "content_format_preference": "short",
+          "inferred_at": "2024-01-15T11:59:55Z",
+          "confidence": 0.88
+        }
+      }
+    ],
+    "created_at": "2024-01-03T00:00:00Z",
+    "updated_at": "2024-01-15T16:45:00Z"
+  }
+]

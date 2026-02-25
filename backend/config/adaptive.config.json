@@ -1,0 +1,18 @@
+{
+  "features": {
+    "enable_audience_engine": true,
+    "enable_domain_engine": true,
+    "enable_engagement_scoring": true,
+    "enable_retry_loop": true,
+    "enable_memory_system": true
+  },
+  "thresholds": {
+    "engagement_score_threshold": 70,
+    "max_retry_attempts": 2
+  },
+  "bedrock": {
+    "use_mocks": true,
+    "model_id": "anthropic.claude-4-5",
+    "region": "us-east-1"
+  }
+}
