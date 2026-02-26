@@ -7,33 +7,81 @@
     font-family: 'Inter', system-ui, sans-serif;
   }
   
+  /* Light Theme (Default) */
+  html.light {
+    --color-bg-primary: 249 250 251;
+    --color-bg-secondary: 255 255 255;
+    --color-bg-tertiary: 243 244 246;
+    --color-text-primary: 17 24 39;
+    --color-text-secondary: 75 85 99;
+    --color-text-tertiary: 156 163 175;
+    --color-border: 229 231 235;
+    --color-hover: 243 244 246;
+    --color-primary: 99 102 241;
+    --color-primary-hover: 79 70 229;
+    --color-surface: 255 255 255;
+    --color-card-bg: 255 255 255;
+  }
+  
+  /* Dark Theme */
+  html.dark {
+    --color-bg-primary: 17 24 39;
+    --color-bg-secondary: 31 41 55;
+    --color-bg-tertiary: 55 65 81;
+    --color-text-primary: 243 244 246;
+    --color-text-secondary: 209 213 219;
+    --color-text-tertiary: 156 163 175;
+    --color-border: 55 65 81;
+    --color-hover: 55 65 81;
+    --color-primary: 99 102 241;
+    --color-primary-hover: 129 140 248;
+    --color-surface: 31 41 55;
+    --color-card-bg: 31 41 55;
+  }
+  
+  /* Grey Theme */
+  html.grey {
+    --color-bg-primary: 71 85 105;
+    --color-bg-secondary: 100 116 139;
+    --color-bg-tertiary: 51 65 85;
+    --color-text-primary: 248 250 252;
+    --color-text-secondary: 226 232 240;
+    --color-text-tertiary: 203 213 225;
+    --color-border: 100 116 139;
+    --color-hover: 71 85 105;
+    --color-primary: 14 165 233;
+    --color-primary-hover: 56 189 248;
+    --color-surface: 100 116 139;
+    --color-card-bg: 100 116 139;
+  }
+  
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-theme-bg-primary text-theme-text-primary transition-colors duration-200;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-primary-500 hover:bg-primary-600 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200;
+    @apply bg-theme-primary hover:bg-theme-primary-hover text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200;
   }
   
   .btn-secondary {
-    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-4 py-2 rounded-lg transition-colors duration-200;
+    @apply bg-theme-bg-tertiary hover:bg-theme-hover text-theme-text-primary font-medium px-4 py-2 rounded-lg transition-colors duration-200;
   }
   
   .card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;
+    @apply bg-theme-card-bg rounded-xl shadow-sm border border-theme-border p-6 transition-colors duration-200;
   }
   
   .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    @apply w-full px-3 py-2 border border-theme-border rounded-lg bg-theme-surface text-theme-text-primary placeholder-theme-text-tertiary focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-transparent transition-colors duration-200;
   }
   
   .slider-track {
-    @apply w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer;
+    @apply w-full h-2 bg-theme-bg-tertiary rounded-lg appearance-none cursor-pointer;
   }
   
   .slider-thumb {
-    @apply appearance-none w-5 h-5 bg-primary-500 rounded-full cursor-pointer;
+    @apply appearance-none w-5 h-5 bg-theme-primary rounded-full cursor-pointer;
   }
 }

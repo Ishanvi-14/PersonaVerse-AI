@@ -2,20 +2,22 @@
  * Mock Provider for Workflow Intelligence Tools
  * 
  * Provides REAL local processing of user input without external API calls.
- * All algorithms run locally with Bharat-first cultural awareness.
+ * Uses deterministic NLP pipeline for Content Simplifier.
  */
 
 import { SimplifierOutput, CalendarOutput, GapAnalysisOutput } from '../types';
+import { SimplifierPipeline } from '../nlp/SimplifierPipeline';
 
 /**
  * Mock Provider with Real Local Processing
  * 
- * Processes actual user input using local algorithms:
- * - Text simplification with readability analysis
- * - Calendar generation based on niche keywords
- * - Gap analysis using frequency and pattern detection
+ * Processes actual user input using:
+ * - Deterministic NLP pipeline for Content Simplifier
+ * - Algorithmic analysis for Calendar Generator
+ * - Pattern detection for Gap Analyzer
  */
 export class MockProvider {
+  private simplifierPipeline = new SimplifierPipeline();
   private hinglishWords = ['yaar', 'dekho', 'samjhe', 'bas', 'achha', 'theek hai', 'arre', 'kya', 'hai', 'na', 'bhai', 'sahi'];
   private emojis = ['😊', '👍', '🎯', '💡', '✨', '🔥', '💪', '🙌', '👏', '🎉'];
   
@@ -39,7 +41,7 @@ export class MockProvider {
   }
 
   /**
-   * REAL Content Simplifier - Processes actual input text
+   * REAL Content Simplifier - Uses deterministic NLP pipeline
    * 
    * @param input - Original input text to simplify
    * @returns SimplifierOutput with 5 formatted versions based on actual input
@@ -47,107 +49,10 @@ export class MockProvider {
   async getSimplifierResponse(input: string): Promise<SimplifierOutput> {
     await this.simulateDelay(800);
 
-    // Extract key sentences (simple algorithm)
-    const sentences = input.split(/[.!?]+/).filter(s => s.trim().length > 0);
-    const keySentences = sentences.slice(0, Math.min(5, sentences.length));
-
-    // Generate grade 5 explanation
-    const grade5 = this.simplifyToGrade5(input, sentences);
-
-    // Generate bullet summary
-    const bullets = this.extractBullets(keySentences);
-
-    // Generate WhatsApp version
-    const whatsapp = this.convertToWhatsApp(input, sentences);
-
-    // Generate voice script
-    const voice = this.convertToVoiceScript(sentences);
-
-    // Generate Hinglish version
-    const regional = this.convertToHinglish(input, sentences);
-
-    return {
-      grade5_explanation: grade5,
-      bullet_summary: bullets,
-      whatsapp_version: whatsapp,
-      voice_script: voice,
-      regional_version: regional
-    };
-  }
-
-  /**
-   * Simplify text to grade 5 reading level
-   */
-  private simplifyToGrade5(input: string, sentences: string[]): string {
-    const firstSentences = sentences.slice(0, 3);
-    const simplified = firstSentences.map(s => {
-      // Replace complex words with simpler ones
-      let simple = s.trim()
-        .replace(/utilize|utilise/gi, 'use')
-        .replace(/implement/gi, 'do')
-        .replace(/facilitate/gi, 'help')
-        .replace(/demonstrate/gi, 'show')
-        .replace(/approximately/gi, 'about')
-        .replace(/consequently/gi, 'so')
-        .replace(/therefore/gi, 'so');
-      return simple;
-    }).join('. ');
-
-    return `${simplified}. This is like explaining cricket to a friend - simple and clear!`;
-  }
-
-  /**
-   * Extract bullet points from key sentences
-   */
-  private extractBullets(sentences: string[]): string[] {
-    const bullets = sentences.slice(0, Math.min(5, sentences.length)).map(s => {
-      const cleaned = s.trim().replace(/^(and|but|so|also)\s+/i, '');
-      return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
-    });
-
-    // Ensure at least 3 bullets
-    while (bullets.length < 3) {
-      bullets.push('Key point from the content');
-    }
-
-    return bullets.slice(0, 7);
-  }
-
-  /**
-   * Convert to WhatsApp-style message with emojis
-   */
-  private convertToWhatsApp(input: string, sentences: string[]): string {
-    const emoji1 = this.emojis[Math.floor(Math.random() * this.emojis.length)];
-    const emoji2 = this.emojis[Math.floor(Math.random() * this.emojis.length)];
+    // Use deterministic NLP pipeline
+    const outputs = await this.simplifierPipeline.process(input);
     
-    const firstPart = sentences[0]?.trim() || input.substring(0, 100);
-    const hinglish = this.hinglishWords[Math.floor(Math.random() * this.hinglishWords.length)];
-    
-    return `Arre ${hinglish}! ${emoji1} ${firstPart}. Makes sense na? ${emoji2} It's simple when you think about it!`;
-  }
-
-  /**
-   * Convert to voice script with pauses
-   */
-  private convertToVoiceScript(sentences: string[]): string {
-    const intro = "Hello friends. Let me share something important with you.";
-    const mainPoints = sentences.slice(0, 3).map(s => s.trim()).join('. [Pause] ');
-    const outro = "[Pause] So that's the key idea. Hope this helps!";
-    
-    return `${intro} [Pause] ${mainPoints}. ${outro}`;
-  }
-
-  /**
-   * Convert to Hinglish with natural code-switching
-   */
-  private convertToHinglish(input: string, sentences: string[]): string {
-    const word1 = this.hinglishWords[0]; // yaar
-    const word2 = this.hinglishWords[1]; // dekho
-    const word3 = this.hinglishWords[2]; // samjhe
-    
-    const firstSentence = sentences[0]?.trim() || input.substring(0, 100);
-    
-    return `${word2.charAt(0).toUpperCase() + word2.slice(1)} ${word1}, main concept yeh hai ki ${firstSentence}. ${word3.charAt(0).toUpperCase() + word3.slice(1)}? It's actually quite simple once you get it. Bas itna hi!`;
+    return outputs;
   }
 
   /**
