@@ -4,13 +4,14 @@ import { Brain, Sparkles, Users, Zap } from 'lucide-react'
 import { PersonaDNAMap } from './features/persona-dna/PersonaDNAMap'
 import { IdentityDrivenEditor } from './components/IdentityDrivenEditor'
 import AdaptiveDashboard from './features/adaptive-intelligence/AdaptiveDashboard'
+import { WorkflowToolsTab } from './features/workflow-tools/WorkflowToolsTab'
 import { personaService } from './services/personaService'
 import type { PersonaLayer } from '@backend/shared/persona.types'
 
 function App() {
   const [selectedPersona, setSelectedPersona] = useState<PersonaLayer | null>(null)
   const [personas, setPersonas] = useState<PersonaLayer[]>([])
-  const [activeTab, setActiveTab] = useState<'editor' | 'dna' | 'adaptive'>('editor')
+  const [activeTab, setActiveTab] = useState<'editor' | 'dna' | 'adaptive' | 'workflow'>('editor')
 
   useEffect(() => {
     const loadPersonas = async () => {
@@ -91,6 +92,16 @@ function App() {
                   Adaptive Intelligence
                 </button>
                 <button
+                  onClick={() => setActiveTab('workflow')}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                    activeTab === 'workflow'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Workflow Tools
+                </button>
+                <button
                   onClick={() => setActiveTab('dna')}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                     activeTab === 'dna'
@@ -112,6 +123,8 @@ function App() {
           <IdentityDrivenEditor />
         ) : activeTab === 'adaptive' ? (
           <AdaptiveDashboard />
+        ) : activeTab === 'workflow' ? (
+          <WorkflowToolsTab />
         ) : (
           <div className="space-y-8">
             <div className="text-center">
