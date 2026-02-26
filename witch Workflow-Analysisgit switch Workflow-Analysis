@@ -1,0 +1,11 @@
+* [33m1b70f89[m[33m ([m[1;36mHEAD -> [m[1;32mfeature-login[m[33m)[m Added mock workflow
+*   [33mf92c8c5[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/feature-login[m[33m, [m[1;31morigin/Workflow-Analysis[m[33m, [m[1;32mmain[m[33m, [m[1;32mWorkflow-Analysis[m[33m)[m Resolved merge conflicts in design.md and requirements.md
+[32m|[m[33m\[m  
+[32m|[m * [33me20f6f2[m Updated .md
+[32m|[m * [33m95593b3[m Add files via upload
+* [33m|[m [33mda45acd[m Adaptive Intelligence Dashboard
+[33m|[m[33m/[m  
+* [33m3cefa1a[m remaining changes
+* [33m8dfa268[m Frontend addition
+* [33m3597c69[m chore: ignore node_modules and fix line endings
+* [33maa8438c[m feat: initial identity-as-primitive foundation
