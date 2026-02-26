@@ -220,6 +220,26 @@ export function createApp(config: AdaptiveConfig): express.Application {
   const routesAdapter = new RoutesAdapter(config);
   app.use('/api', routesAdapter.getRouter());
 
+  // Mount workflow tools routes (non-destructive addition)
+  try {
+    console.log('[Server] Attempting to load Workflow Intelligence Tools...');
+    const workflowModule = require('../workflow_tools');
+    console.log('[Server] Module loaded, exports:', Object.keys(workflowModule));
+    
+    const { createWorkflowToolsRouter } = workflowModule;
+    if (!createWorkflowToolsRouter) {
+      throw new Error('createWorkflowToolsRouter function not found in module');
+    }
+    
+    const workflowRouter = createWorkflowToolsRouter();
+    app.use('/tools', workflowRouter);
+    console.log('✓ Workflow Intelligence Tools loaded successfully');
+  } catch (error) {
+    console.error('❌ Workflow Intelligence Tools failed to load:');
+    console.error(error);
+    console.log('ℹ Workflow Intelligence Tools not available (optional module)');
+  }
+
   // Health check
   app.get('/health', (req, res) => {
     res.json({ 

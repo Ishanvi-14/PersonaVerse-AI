@@ -49,6 +49,11 @@ const server = app.listen(PORT, () => {
   console.log(`  - Legacy Generate: POST http://localhost:${PORT}/api/generate`);
   console.log(`  - Adaptive Generate: POST http://localhost:${PORT}/api/generate-adaptive`);
   console.log(`  - User Memory: GET http://localhost:${PORT}/api/memory/:userId`);
+  console.log(`\nWorkflow Tools:`);
+  console.log(`  - Content Simplifier: POST http://localhost:${PORT}/tools/simplify`);
+  console.log(`  - Calendar Generator: POST http://localhost:${PORT}/tools/calendar`);
+  console.log(`  - Gap Analyzer: POST http://localhost:${PORT}/tools/gap-analysis`);
+  console.log(`  - Export: GET http://localhost:${PORT}/tools/export/:format`);
   console.log('\n✨ Ready for Bharat-first adaptive intelligence!\n');
 });
 

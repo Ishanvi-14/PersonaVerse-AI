@@ -7,11 +7,25 @@
       "education": 3,
       "business": 13,
       "finance": 5,
-      "health": 1,
+      "health": 2,
       "creator": 9,
       "government": 0
     },
     "previous_summaries": [
+      {
+        "timestamp": "2026-02-25T17:38:48.679Z",
+        "domain": "health",
+        "platform": "linkedin",
+        "engagement_score": 74,
+        "audience_profile": {
+          "language_style": "english",
+          "literacy_level": "high",
+          "communication_tone": "friendly",
+          "content_format_preference": "short",
+          "inferred_at": "2026-02-25T17:38:48.535Z",
+          "confidence": 0.65
+        }
+      },
       {
         "timestamp": "2026-02-25T17:18:26.633Z",
         "domain": "creator",
@@ -84,7 +98,7 @@
       }
     ],
     "created_at": "2024-01-01T00:00:00Z",
-    "updated_at": "2026-02-25T17:18:26.633Z"
+    "updated_at": "2026-02-25T17:38:48.679Z"
   },
   {
     "userId": "tier2_entrepreneur",
