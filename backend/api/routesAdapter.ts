@@ -240,6 +240,19 @@ export function createApp(config: AdaptiveConfig): express.Application {
     console.log('ℹ Workflow Intelligence Tools not available (optional module)');
   }
 
+  // Mount voice-to-text routes (non-destructive addition)
+  try {
+    console.log('[Server] Attempting to load Voice-to-Text Service...');
+    const { createVoiceToTextRouter } = require('./voiceToTextRoutes');
+    const voiceRouter = createVoiceToTextRouter();
+    app.use('/voice', voiceRouter);
+    console.log('✓ Voice-to-Text Service loaded successfully');
+  } catch (error) {
+    console.error('❌ Voice-to-Text Service failed to load:');
+    console.error(error);
+    console.log('ℹ Voice-to-Text Service not available (optional module)');
+  }
+
   // Health check
   app.get('/health', (req, res) => {
     res.json({ 

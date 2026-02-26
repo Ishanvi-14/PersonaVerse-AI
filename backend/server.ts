@@ -12,6 +12,10 @@
  * - Dual API endpoints (legacy + adaptive)
  */
 
+// Load environment variables FIRST
+import dotenv from 'dotenv';
+dotenv.config();
+
 import { createApp } from './api/routesAdapter';
 import { AdaptiveConfig } from './shared/adaptive.types';
 import * as fs from 'fs';
@@ -33,6 +37,11 @@ console.log(`  - Memory System: ${config.features.enable_memory_system ? '✓' :
 console.log(`  - Bedrock Mocks: ${config.bedrock.use_mocks ? '✓ (Credit Discipline)' : '✗ (Live)'}`);
 console.log(`  - Engagement Threshold: ${config.thresholds.engagement_score_threshold}`);
 console.log(`  - Max Retries: ${config.thresholds.max_retry_attempts}`);
+console.log('AWS Configuration:');
+console.log(`  - AWS Region: ${process.env.AWS_REGION || 'Not Set'}`);
+console.log(`  - AWS Access Key: ${process.env.AWS_ACCESS_KEY_ID ? '✓ Configured' : '✗ Not Set'}`);
+console.log(`  - AWS Secret Key: ${process.env.AWS_SECRET_ACCESS_KEY ? '✓ Configured' : '✗ Not Set'}`);
+console.log(`  - S3 Bucket: ${process.env.S3_BUCKET_NAME || 'Not Set'}`);
 console.log('='.repeat(60));
 
 // Create Express app
@@ -54,6 +63,8 @@ const server = app.listen(PORT, () => {
   console.log(`  - Calendar Generator: POST http://localhost:${PORT}/tools/calendar`);
   console.log(`  - Gap Analyzer: POST http://localhost:${PORT}/tools/gap-analysis`);
   console.log(`  - Export: GET http://localhost:${PORT}/tools/export/:format`);
+  console.log(`\nVoice-to-Text:`);
+  console.log(`  - Transcribe Audio: POST http://localhost:${PORT}/voice/transcribe`);
   console.log('\n✨ Ready for Bharat-first adaptive intelligence!\n');
 });
 

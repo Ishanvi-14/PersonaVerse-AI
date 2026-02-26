@@ -14,6 +14,10 @@ import {
 import type { PersonaLayer, GenerationResponse, SupportedPlatform } from '@backend/shared/persona.types'
 import { personaService } from '../services/personaService'
 import { cn, getPersonaColor, getPlatformIcon } from '../lib/utils'
+import { VoiceInput } from './VoiceInput'
+import { DownloadAsImage } from '../features/distribution/DownloadAsImage'
+import { PlatformFormatter } from '../features/distribution/PlatformFormatter'
+import { RemixModal } from '../features/distribution/RemixModal'
 
 interface IdentityDrivenEditorProps {
   className?: string
@@ -33,6 +37,8 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
   const [inputContent, setInputContent] = useState('')
   const [generatedContent, setGeneratedContent] = useState<GenerationResponse | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [voiceError, setVoiceError] = useState<string | null>(null)
+  const [isRemixModalOpen, setIsRemixModalOpen] = useState(false)
   const [emotionSliders, setEmotionSliders] = useState<EmotionSliders>({
     urgency: 5,
     enthusiasm: 7,
@@ -91,6 +97,22 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
     setEmotionSliders(prev => ({ ...prev, [key]: value }))
   }
 
+  const handleVoiceTranscript = (transcript: string) => {
+    const newContent = inputContent ? `${inputContent} ${transcript}` : transcript
+    setInputContent(newContent)
+    setVoiceError(null)
+  }
+
+  const handleVoiceError = (error: string) => {
+    setVoiceError(error)
+    setTimeout(() => setVoiceError(null), 5000)
+  }
+
+  const handleSaveRemix = (remixedContent: string) => {
+    setInputContent(remixedContent)
+    setIsRemixModalOpen(false)
+  }
+
   const getAlignmentColor = (score: number) => {
     if (score >= 0.8) return 'text-green-600 bg-green-50'
     if (score >= 0.6) return 'text-yellow-600 bg-yellow-50'
@@ -101,10 +123,10 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
     <div className={cn('space-y-6', className)}>
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-3xl font-display font-bold text-gray-900 mb-2">
+        <h2 className="text-3xl font-display font-bold text-theme-text-primary mb-2">
           Identity-Driven Content Editor
         </h2>
-        <p className="text-gray-600">
+        <p className="text-theme-text-secondary">
           Transform your ideas with authentic Bharat voice transcreation
         </p>
       </div>
@@ -114,7 +136,7 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
         <div className="lg:col-span-1 space-y-6">
           {/* Persona Selection */}
           <div className="card">
-            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <h3 className="font-semibold text-theme-text-primary mb-4 flex items-center gap-2">
               <Crown className="w-5 h-5 text-primary-500" />
               Select Persona Layer
             </h3>
@@ -128,8 +150,8 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
                   className={cn(
                     'w-full p-3 rounded-lg border-2 text-left transition-all duration-200',
                     selectedPersona?.id === persona.id
-                      ? 'border-primary-500 bg-primary-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-primary-500 bg-primary-500/10'
+                      : 'border-theme-border hover:border-theme-border/60 bg-theme-surface'
                   )}
                 >
                   <div className="flex items-center gap-3">
@@ -138,8 +160,8 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
                       style={{ backgroundColor: getPersonaColor(persona.id) }}
                     />
                     <div>
-                      <div className="font-medium text-gray-900">{persona.name}</div>
-                      <div className="text-sm text-gray-600">
+                      <div className="font-medium text-theme-text-primary">{persona.name}</div>
+                      <div className="text-sm text-theme-text-secondary">
                         {Math.round(persona.linguisticDNA.hinglishRatio * 100)}% Hinglish • 
                         {persona.linguisticDNA.cadence} cadence
                       </div>
@@ -152,7 +174,7 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
 
           {/* Platform Selection */}
           <div className="card">
-            <h3 className="font-semibold text-gray-900 mb-4">Target Platform</h3>
+            <h3 className="font-semibold text-theme-text-primary mb-4">Target Platform</h3>
             <div className="grid grid-cols-2 gap-2">
               {platforms.map((platform) => (
                 <button
@@ -161,8 +183,8 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
                   className={cn(
                     'p-3 rounded-lg border text-center transition-all duration-200',
                     selectedPlatform === platform.id
-                      ? 'border-primary-500 bg-primary-50 text-primary-700'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-primary-500 bg-primary-500/10 text-primary-600'
+                      : 'border-theme-border hover:border-theme-border/60 bg-theme-surface text-theme-text-primary'
                   )}
                 >
                   <div className="text-lg mb-1">{getPlatformIcon(platform.id)}</div>
@@ -174,7 +196,7 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
 
           {/* Emotion Sliders */}
           <div className="card">
-            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <h3 className="font-semibold text-theme-text-primary mb-4 flex items-center gap-2">
               <Heart className="w-5 h-5 text-red-500" />
               Emotion Tuning
             </h3>
@@ -187,11 +209,11 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
               ].map(({ key, label, icon: Icon, color }) => (
                 <div key={key}>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <label className="flex items-center gap-2 text-sm font-medium text-theme-text-primary">
                       <Icon className={cn('w-4 h-4', color)} />
                       {label}
                     </label>
-                    <span className="text-sm text-gray-500">{emotionSliders[key]}/10</span>
+                    <span className="text-sm text-theme-text-secondary">{emotionSliders[key]}/10</span>
                   </div>
                   <input
                     type="range"
@@ -199,7 +221,7 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
                     max="10"
                     value={emotionSliders[key]}
                     onChange={(e) => handleSliderChange(key, parseInt(e.target.value))}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-track"
+                    className="w-full h-2 bg-theme-bg-tertiary rounded-lg appearance-none cursor-pointer slider-track"
                   />
                 </div>
               ))}
@@ -211,15 +233,29 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
         <div className="lg:col-span-2 space-y-6">
           {/* Input Editor */}
           <div className="card">
-            <h3 className="font-semibold text-gray-900 mb-4">Your Input</h3>
-            <textarea
-              value={inputContent}
-              onChange={(e) => setInputContent(e.target.value)}
-              placeholder="Enter your content here... (e.g., 'We need to work hard to achieve our quarterly goals')"
-              className="w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            />
+            <h3 className="font-semibold text-theme-text-primary mb-4">Your Input</h3>
+            <div className="relative">
+              <textarea
+                value={inputContent}
+                onChange={(e) => setInputContent(e.target.value)}
+                placeholder="Enter your content here... (e.g., 'We need to work hard to achieve our quarterly goals')"
+                className="w-full h-32 p-4 border border-theme-border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-theme-surface text-theme-text-primary placeholder-theme-text-tertiary"
+              />
+              <div className="absolute top-2 right-2">
+                <VoiceInput
+                  onTranscript={handleVoiceTranscript}
+                  onError={handleVoiceError}
+                  disabled={isGenerating}
+                />
+              </div>
+            </div>
+            {voiceError && (
+              <div className="mt-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2">
+                {voiceError}
+              </div>
+            )}
             <div className="flex items-center justify-between mt-4">
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-theme-text-secondary">
                 {inputContent.length} characters
               </div>
               <motion.button
@@ -257,20 +293,38 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
                 className="card"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-gray-900">Generated Content</h3>
-                  <div className={cn(
-                    'px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2',
-                    getAlignmentColor(generatedContent.personaAlignmentScore)
-                  )}>
-                    <CheckCircle className="w-4 h-4" />
-                    {Math.round(generatedContent.personaAlignmentScore * 100)}% Aligned
+                  <h3 className="font-semibold text-theme-text-primary">Generated Content</h3>
+                  <div className="flex items-center gap-3">
+                    <DownloadAsImage 
+                      content={generatedContent.generatedContent} 
+                      personaName={selectedPersona?.name}
+                    />
+                    <button
+                      onClick={() => setIsRemixModalOpen(true)}
+                      className="btn-secondary flex items-center gap-2"
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      Remix
+                    </button>
+                    <div className={cn(
+                      'px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2',
+                      getAlignmentColor(generatedContent.personaAlignmentScore)
+                    )}>
+                      <CheckCircle className="w-4 h-4" />
+                      {Math.round(generatedContent.personaAlignmentScore * 100)}% Aligned
+                    </div>
                   </div>
                 </div>
 
-                <div className="p-4 bg-gray-50 rounded-lg mb-4">
-                  <p className="text-gray-900 leading-relaxed">
+                <div className="p-4 bg-theme-bg-tertiary rounded-lg mb-4">
+                  <p className="text-theme-text-primary leading-relaxed">
                     {generatedContent.generatedContent}
                   </p>
+                </div>
+
+                {/* Platform Formatting Section */}
+                <div className="mb-4">
+                  <PlatformFormatter content={generatedContent.generatedContent} />
                 </div>
 
                 {/* Voice Drift Alert */}
@@ -287,7 +341,7 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
                 {/* Audience Simulation */}
                 {generatedContent.audienceSimulation && (
                   <div className="space-y-3">
-                    <h4 className="font-medium text-gray-900 flex items-center gap-2">
+                    <h4 className="font-medium text-theme-text-primary flex items-center gap-2">
                       <Users className="w-4 h-4" />
                       Audience Mirror
                     </h4>
@@ -315,8 +369,8 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
                 )}
 
                 {/* Metadata */}
-                <div className="mt-4 pt-4 border-t border-gray-200">
-                  <div className="flex items-center justify-between text-sm text-gray-500">
+                <div className="mt-4 pt-4 border-t border-theme-border">
+                  <div className="flex items-center justify-between text-sm text-theme-text-secondary">
                     <span>Generated in {generatedContent.metadata.processingTimeMs}ms</span>
                     <span>{generatedContent.metadata.modelVersion}</span>
                   </div>
@@ -326,6 +380,16 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
           </AnimatePresence>
         </div>
       </div>
+
+      {/* Remix Modal */}
+      {generatedContent && (
+        <RemixModal
+          isOpen={isRemixModalOpen}
+          onClose={() => setIsRemixModalOpen(false)}
+          content={generatedContent.generatedContent}
+          onSave={handleSaveRemix}
+        />
+      )}
     </div>
   )
 }
