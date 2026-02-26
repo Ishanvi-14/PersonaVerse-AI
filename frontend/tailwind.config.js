@@ -48,6 +48,21 @@ export default {
         saffron: '#FF6B35',
         emerald: '#1A936F',
         indigo: '#004E89',
+        // Theme-aware colors
+        theme: {
+          'bg-primary': 'rgb(var(--color-bg-primary) / <alpha-value>)',
+          'bg-secondary': 'rgb(var(--color-bg-secondary) / <alpha-value>)',
+          'bg-tertiary': 'rgb(var(--color-bg-tertiary) / <alpha-value>)',
+          'text-primary': 'rgb(var(--color-text-primary) / <alpha-value>)',
+          'text-secondary': 'rgb(var(--color-text-secondary) / <alpha-value>)',
+          'text-tertiary': 'rgb(var(--color-text-tertiary) / <alpha-value>)',
+          'border': 'rgb(var(--color-border) / <alpha-value>)',
+          'hover': 'rgb(var(--color-hover) / <alpha-value>)',
+          'primary': 'rgb(var(--color-primary) / <alpha-value>)',
+          'primary-hover': 'rgb(var(--color-primary-hover) / <alpha-value>)',
+          'surface': 'rgb(var(--color-surface) / <alpha-value>)',
+          'card-bg': 'rgb(var(--color-card-bg) / <alpha-value>)',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

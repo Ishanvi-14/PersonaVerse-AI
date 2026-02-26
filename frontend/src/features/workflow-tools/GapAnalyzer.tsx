@@ -97,17 +97,17 @@ export const GapAnalyzer: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Gap Analyzer</h2>
-        <p className="text-gray-600">
+        <h2 className="text-2xl font-bold text-theme-text-primary mb-2">Gap Analyzer</h2>
+        <p className="text-theme-text-secondary">
           Identify patterns, overused themes, and new opportunities
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Input Section */}
-        <div className="bg-white rounded-lg shadow-sm p-6 space-y-4">
+        <div className="bg-theme-card-bg border border-theme-border rounded-lg shadow-sm p-6 space-y-4">
           <div className="flex items-center justify-between mb-4">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-theme-text-primary">
               Your Posts ({validPosts.length} / 50) *
             </label>
             <label className="text-sm text-blue-600 hover:text-blue-700 cursor-pointer">
@@ -129,7 +129,7 @@ export const GapAnalyzer: React.FC = () => {
                   value={post}
                   onChange={(e) => updatePost(idx, e.target.value)}
                   placeholder={`Post ${idx + 1}...`}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none h-20"
+                  className="flex-1 px-3 py-2 bg-theme-surface border border-theme-border text-theme-text-primary placeholder-theme-text-tertiary rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none h-20"
                 />
                 {posts.length > 3 && (
                   <button
@@ -148,7 +148,7 @@ export const GapAnalyzer: React.FC = () => {
             <button
               type="button"
               onClick={addPost}
-              className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-purple-400 hover:text-purple-600 transition-colors"
+              className="w-full py-2 border-2 border-dashed border-theme-border rounded-lg text-theme-text-secondary hover:border-purple-400 hover:text-purple-600 transition-colors"
             >
               + Add Another Post
             </button>
@@ -156,7 +156,7 @@ export const GapAnalyzer: React.FC = () => {
 
           {/* Niche Context */}
           <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-theme-text-primary mb-2">
               Niche Context (Optional)
             </label>
             <input
@@ -165,9 +165,9 @@ export const GapAnalyzer: React.FC = () => {
               onChange={(e) => setNicheContext(e.target.value)}
               maxLength={200}
               placeholder="e.g., Personal finance, Tech tutorials, Fitness coaching..."
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-4 py-2 bg-theme-surface border border-theme-border text-theme-text-primary placeholder-theme-text-tertiary rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             />
-            <span className="text-xs text-gray-500 mt-1">
+            <span className="text-xs text-theme-text-tertiary mt-1">
               {nicheContext.length} / 200 characters
             </span>
           </div>
@@ -204,7 +204,7 @@ export const GapAnalyzer: React.FC = () => {
       {result && (
         <div className="mt-8 space-y-6">
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-bold text-gray-900">Analysis Results</h3>
+            <h3 className="text-xl font-bold text-theme-text-primary">Analysis Results</h3>
             <ExportButtons
               toolName="gap-analyzer"
               data={result}
@@ -212,8 +212,8 @@ export const GapAnalyzer: React.FC = () => {
           </div>
 
           {/* Diversity Score */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="bg-theme-card-bg border border-theme-border rounded-lg shadow-sm p-6">
+            <h4 className="text-lg font-semibold text-theme-text-primary mb-4 flex items-center gap-2">
               <span>📊</span>
               Content Diversity Score
             </h4>
@@ -232,7 +232,7 @@ export const GapAnalyzer: React.FC = () => {
                     style={{ width: `${result.diversity_score}%` }}
                   />
                 </div>
-                <p className="text-sm text-gray-600 mt-2">
+                <p className="text-sm text-theme-text-secondary mt-2">
                   {result.diversity_score >= 70 ? 'Excellent variety!' :
                    result.diversity_score >= 40 ? 'Good, but room for improvement' :
                    'Low diversity - consider mixing up your content'}
@@ -242,16 +242,16 @@ export const GapAnalyzer: React.FC = () => {
           </div>
 
           {/* Fatigue Risk */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="bg-theme-card-bg border border-theme-border rounded-lg shadow-sm p-6">
+            <h4 className="text-lg font-semibold text-theme-text-primary mb-4 flex items-center gap-2">
               <span>⚡</span>
               Audience Fatigue Risk
             </h4>
             <div className={`inline-block px-4 py-2 rounded-full font-bold ${getFatigueColor(result.fatigue_risk.level)}`}>
               {result.fatigue_risk.level.toUpperCase()} RISK
             </div>
-            <p className="text-gray-700 mt-3">{result.fatigue_risk.explanation}</p>
-            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mt-4">
+            <p className="text-theme-text-secondary mt-3">{result.fatigue_risk.explanation}</p>
+            <div className="bg-blue-50 border border-blue-300 border-l-4 border-l-blue-500 p-4 mt-4 rounded">
               <p className="text-sm text-blue-900">
                 <span className="font-semibold">Recommendation:</span> {result.fatigue_risk.recommendation}
               </p>
@@ -259,14 +259,14 @@ export const GapAnalyzer: React.FC = () => {
           </div>
 
           {/* Overused Themes */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="bg-theme-card-bg border border-theme-border rounded-lg shadow-sm p-6">
+            <h4 className="text-lg font-semibold text-theme-text-primary mb-4 flex items-center gap-2">
               <span>🔁</span>
               Overused Themes
             </h4>
             <div className="space-y-3">
               {result.overused_themes.map((theme, idx) => (
-                <div key={idx} className="border-l-4 border-orange-500 bg-orange-50 p-4 rounded">
+                <div key={idx} className="border-l-4 border-orange-500 bg-orange-50 border border-orange-200 p-4 rounded">
                   <div className="flex items-center justify-between mb-2">
                     <h5 className="font-bold text-gray-900">{theme.theme}</h5>
                     <span className={`px-3 py-1 rounded-full text-sm font-bold ${
@@ -277,7 +277,7 @@ export const GapAnalyzer: React.FC = () => {
                       {theme.frequency_percentage}%
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-700">
                     Appears in posts: {theme.example_posts.map(p => `#${p + 1}`).join(', ')}
                   </p>
                 </div>
@@ -286,17 +286,17 @@ export const GapAnalyzer: React.FC = () => {
           </div>
 
           {/* Missing Topics */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="bg-theme-card-bg border border-theme-border rounded-lg shadow-sm p-6">
+            <h4 className="text-lg font-semibold text-theme-text-primary mb-4 flex items-center gap-2">
               <span>💡</span>
               Missing Topics & Opportunities
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {result.missing_topics.map((topic, idx) => (
-                <div key={idx} className="bg-green-50 border border-green-200 p-3 rounded-lg">
+                <div key={idx} className="bg-green-50 border border-green-300 p-3 rounded-lg">
                   <div className="flex items-start gap-2">
                     <span className="text-green-600 mt-1">✓</span>
-                    <span className="text-gray-700">{topic}</span>
+                    <span className="text-gray-800">{topic}</span>
                   </div>
                 </div>
               ))}
@@ -304,17 +304,17 @@ export const GapAnalyzer: React.FC = () => {
           </div>
 
           {/* Suggested Angles */}
-          <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-6">
+          <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-300 rounded-lg p-6">
             <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <span>🎯</span>
               Suggested Content Angles
             </h4>
             <div className="space-y-2">
               {result.suggested_angles.map((angle, idx) => (
-                <div key={idx} className="bg-white p-3 rounded-lg shadow-sm">
+                <div key={idx} className="bg-white border border-purple-200 p-3 rounded-lg shadow-sm">
                   <div className="flex items-start gap-3">
                     <span className="text-purple-600 font-bold">{idx + 1}.</span>
-                    <span className="text-gray-700">{angle}</span>
+                    <span className="text-gray-800">{angle}</span>
                   </div>
                 </div>
               ))}
@@ -324,7 +324,7 @@ export const GapAnalyzer: React.FC = () => {
           {/* Re-analyze Button */}
           <button
             onClick={() => setResult(null)}
-            className="w-full py-3 px-6 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+            className="w-full py-3 px-6 bg-theme-bg-tertiary text-theme-text-primary rounded-lg font-medium hover:bg-theme-hover transition-colors"
           >
             ← Analyze Different Posts
           </button>

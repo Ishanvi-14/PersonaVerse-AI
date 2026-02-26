@@ -43,11 +43,11 @@ export const WorkflowToolsTab: React.FC = () => {
 
   if (selectedTool) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-theme-bg-primary p-6">
         <div className="max-w-6xl mx-auto">
           <button
             onClick={() => setSelectedTool(null)}
-            className="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+            className="mb-6 flex items-center gap-2 text-theme-text-secondary hover:text-theme-text-primary transition-colors"
           >
             <span>←</span>
             <span>Back to Tools</span>
@@ -62,13 +62,13 @@ export const WorkflowToolsTab: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-theme-bg-primary p-6">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-theme-text-primary mb-2">
             Workflow Intelligence Tools
           </h1>
-          <p className="text-gray-600">
+          <p className="text-theme-text-secondary">
             Bharat-first content workflow utilities for creators
           </p>
         </div>
@@ -81,10 +81,10 @@ export const WorkflowToolsTab: React.FC = () => {
               className={`${tool.color} border-2 rounded-lg p-6 text-left transition-all hover:shadow-md`}
             >
               <div className="text-4xl mb-4">{tool.icon}</div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
+              <h3 className="text-xl font-bold text-theme-text-primary mb-2">
                 {tool.title}
               </h3>
-              <p className="text-gray-600 text-sm">
+              <p className="text-theme-text-secondary text-sm">
                 {tool.description}
               </p>
             </button>

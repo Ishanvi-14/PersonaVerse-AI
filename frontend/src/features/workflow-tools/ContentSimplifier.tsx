@@ -69,16 +69,16 @@ export const ContentSimplifier: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Content Simplifier</h2>
-        <p className="text-gray-600">
+        <h2 className="text-2xl font-bold text-theme-text-primary mb-2">Content Simplifier</h2>
+        <p className="text-theme-text-secondary">
           Transform complex content into 5 formats for Bharat audiences
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Input Section */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="bg-theme-card-bg rounded-lg shadow-sm p-6 border border-theme-border">
+          <label className="block text-sm font-medium text-theme-text-primary mb-2">
             Content to Simplify *
           </label>
           
@@ -86,7 +86,7 @@ export const ContentSimplifier: React.FC = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Paste your content here (50-10,000 characters)..."
-            className="w-full h-48 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            className="w-full h-48 px-4 py-3 bg-theme-surface border border-theme-border text-theme-text-primary placeholder-theme-text-tertiary rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
           />
           
           <div className="flex items-center justify-between mt-2">
@@ -94,7 +94,7 @@ export const ContentSimplifier: React.FC = () => {
               <span className={`text-sm ${
                 charCount < 50 ? 'text-red-600' :
                 charCount > 10000 ? 'text-red-600' :
-                'text-gray-600'
+                'text-theme-text-secondary'
               }`}>
                 {charCount.toLocaleString()} / 10,000 characters
                 {charCount < 50 && ' (minimum 50)'}
@@ -114,7 +114,7 @@ export const ContentSimplifier: React.FC = () => {
 
           {/* Audience Context */}
           <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-theme-text-primary mb-2">
               Audience Context (Optional)
             </label>
             <input
@@ -123,9 +123,9 @@ export const ContentSimplifier: React.FC = () => {
               onChange={(e) => setAudienceContext(e.target.value)}
               maxLength={500}
               placeholder="e.g., Tier-2 city entrepreneurs, college students..."
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 bg-theme-surface border border-theme-border text-theme-text-primary placeholder-theme-text-tertiary rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
-            <span className="text-xs text-gray-500 mt-1">
+            <span className="text-xs text-theme-text-tertiary mt-1">
               {audienceContext.length} / 500 characters
             </span>
           </div>
@@ -162,7 +162,7 @@ export const ContentSimplifier: React.FC = () => {
       {result && (
         <div className="mt-8 space-y-6">
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-bold text-gray-900">Simplified Versions</h3>
+            <h3 className="text-xl font-bold text-theme-text-primary">Simplified Versions</h3>
             <ExportButtons
               toolName="simplifier"
               data={result}
@@ -170,25 +170,25 @@ export const ContentSimplifier: React.FC = () => {
           </div>
 
           {/* 5th Grade Explanation */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-theme-card-bg border border-theme-border rounded-lg shadow-sm p-6">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-2xl">🎓</span>
-              <h4 className="text-lg font-semibold text-gray-900">5th Grade Explanation</h4>
+              <h4 className="text-lg font-semibold text-theme-text-primary">5th Grade Explanation</h4>
             </div>
-            <p className="text-gray-700 leading-relaxed">{result.grade5_explanation}</p>
+            <p className="text-theme-text-secondary leading-relaxed">{result.grade5_explanation}</p>
           </div>
 
           {/* Bullet Summary */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-theme-card-bg border border-theme-border rounded-lg shadow-sm p-6">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-2xl">📋</span>
-              <h4 className="text-lg font-semibold text-gray-900">Bullet Summary</h4>
+              <h4 className="text-lg font-semibold text-theme-text-primary">Bullet Summary</h4>
             </div>
             <ul className="space-y-2">
               {result.bullet_summary.map((point, idx) => (
                 <li key={idx} className="flex items-start gap-2">
                   <span className="text-blue-600 mt-1">•</span>
-                  <span className="text-gray-700">{point}</span>
+                  <span className="text-theme-text-secondary">{point}</span>
                 </li>
               ))}
             </ul>
@@ -198,18 +198,18 @@ export const ContentSimplifier: React.FC = () => {
           <div className="bg-green-50 border border-green-200 rounded-lg p-6">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-2xl">💬</span>
-              <h4 className="text-lg font-semibold text-gray-900">WhatsApp Version</h4>
+              <h4 className="text-lg font-semibold text-theme-text-primary">WhatsApp Version</h4>
             </div>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{result.whatsapp_version}</p>
+            <p className="text-theme-text-secondary leading-relaxed whitespace-pre-wrap">{result.whatsapp_version}</p>
           </div>
 
           {/* Voice Script */}
           <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-2xl">🎙️</span>
-              <h4 className="text-lg font-semibold text-gray-900">Voice Script</h4>
+              <h4 className="text-lg font-semibold text-theme-text-primary">Voice Script</h4>
             </div>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-wrap font-mono text-sm">
+            <p className="text-theme-text-secondary leading-relaxed whitespace-pre-wrap font-mono text-sm">
               {result.voice_script}
             </p>
           </div>
@@ -218,9 +218,9 @@ export const ContentSimplifier: React.FC = () => {
           <div className="bg-orange-50 border border-orange-200 rounded-lg p-6">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-2xl">🇮🇳</span>
-              <h4 className="text-lg font-semibold text-gray-900">Hinglish Regional Version</h4>
+              <h4 className="text-lg font-semibold text-theme-text-primary">Hinglish Regional Version</h4>
             </div>
-            <p className="text-gray-700 leading-relaxed">{result.regional_version}</p>
+            <p className="text-theme-text-secondary leading-relaxed">{result.regional_version}</p>
           </div>
         </div>
       )}

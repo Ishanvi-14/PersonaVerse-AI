@@ -5,7 +5,7 @@
  * Handles all HTTP communication with the backend workflow tools endpoints.
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_BASE_URL = 'http://localhost:3001';
 
 // ============================================================================
 // Type Definitions
@@ -182,33 +182,67 @@ export class WorkflowToolsService {
     format: 'json' | 'txt' | 'pdf'
   ): Promise<void> {
     try {
-      const encodedData = btoa(JSON.stringify(data));
-      const url = `${API_BASE_URL}/tools/export/${format}?toolName=${toolName}&data=${encodedData}`;
+      // Encode data as base64
+      const jsonString = JSON.stringify(data);
+      const encodedData = btoa(jsonString);
+      
+      // Build URL with proper encoding
+      const params = new URLSearchParams({
+        toolName: toolName,
+        data: encodedData
+      });
+      
+      const url = `${API_BASE_URL}/tools/export/${format}?${params.toString()}`;
+      
+      console.log('[Export] Requesting:', url.substring(0, 100) + '...');
 
       const response = await fetch(url);
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('[Export] Server error:', errorText);
         throw new Error('Export failed');
       }
 
-      // Trigger download
+      // Get the blob
       const blob = await response.blob();
+      
+      // Check if blob has content
+      if (blob.size === 0) {
+        console.error('[Export] Empty file received');
+        throw new Error('Export generated empty file');
+      }
+
+      console.log('[Export] Received blob:', blob.size, 'bytes');
+
+      // Trigger download
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = downloadUrl;
       
       // Get filename from Content-Disposition header or generate one
       const contentDisposition = response.headers.get('Content-Disposition');
-      const filename = contentDisposition
-        ? contentDisposition.split('filename=')[1]?.replace(/"/g, '')
-        : `${toolName}-${new Date().toISOString()}.${format}`;
+      let filename: string;
+      
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+        filename = filenameMatch ? filenameMatch[1] : `${toolName}-export.${format}`;
+      } else {
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('.')[0];
+        filename = `${toolName}-${timestamp}.${format}`;
+      }
       
       link.download = filename;
+      console.log('[Export] Downloading as:', filename);
+      
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(downloadUrl);
+      
+      console.log('[Export] Download triggered successfully');
     } catch (error) {
+      console.error('[Export] Error:', error);
       throw new Error('Failed to export results. Please try again.');
     }
   }
