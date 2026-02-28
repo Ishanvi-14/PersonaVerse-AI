@@ -1,11 +1,12 @@
 /**
  * PersonaService - Main service orchestrator
  * 
- * This service coordinates between the mock Bedrock provider and the shared types
+ * This service coordinates between Groq AI and the shared types
  * to provide a clean interface for the frontend and API Gateway.
  */
 
 import { MockBedrockProvider } from './__mocks__/bedrockProvider';
+import { generateWithGroq } from '../groq/groqService';
 import {
   PersonaLayer,
   GenerationRequest,
@@ -19,9 +20,13 @@ import {
 
 export class PersonaService {
   private bedrockProvider: MockBedrockProvider;
+  private useGroq: boolean;
 
   constructor() {
     this.bedrockProvider = new MockBedrockProvider();
+    this.useGroq = process.env.USE_GROQ === 'true' && !!process.env.GROQ_API_KEY;
+    
+    console.log(`[PersonaService] Using ${this.useGroq ? 'Groq AI' : 'Mock Provider'} for content generation`);
   }
 
   /**
@@ -40,31 +45,56 @@ export class PersonaService {
         );
       }
 
-      // Generate content using mock provider
-      const mockResponse = await this.bedrockProvider.generateContent({
-        personaId: request.personaId,
-        platform: request.platform,
-        content: request.content,
-        emotionSliders: request.emotionSliders,
-      });
+      let generatedContent: string;
+      let personaAlignmentScore: number;
+
+      // Use Groq if available, otherwise use mock
+      if (this.useGroq) {
+        try {
+          const groqResponse = await generateWithGroq({
+            prompt: request.content,
+            personaId: request.personaId,
+            platform: request.platform,
+            domain: 'general',
+            targetLanguage: 'en',
+            culturalContext: 'urban',
+          });
+          
+          generatedContent = groqResponse.content;
+          personaAlignmentScore = groqResponse.personaAlignment?.overallScore || 0.85;
+        } catch (error) {
+          console.error('[PersonaService] Groq generation failed, falling back to mock:', error);
+          const mockResponse = await this.bedrockProvider.generateContent(request);
+          generatedContent = mockResponse.generatedContent;
+          personaAlignmentScore = mockResponse.personaAlignmentScore;
+        }
+      } else {
+        // Use mock provider
+        const mockResponse = await this.bedrockProvider.generateContent(request);
+        generatedContent = mockResponse.generatedContent;
+        personaAlignmentScore = mockResponse.personaAlignmentScore;
+      }
+
+      // Get audience simulation from mock (Groq doesn't provide this)
+      const mockResponse = await this.bedrockProvider.generateContent(request);
 
       // Transform to API response format
       const response: GenerationResponse = {
         id: `gen_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        generatedContent: mockResponse.generatedContent,
-        personaAlignmentScore: mockResponse.personaAlignmentScore,
-        voiceDriftAlert: mockResponse.voiceDriftAlert,
+        generatedContent,
+        personaAlignmentScore,
+        voiceDriftAlert: personaAlignmentScore < 0.7 ? 'Content may not fully align with persona voice' : undefined,
         audienceSimulation: mockResponse.audienceSimulation?.map(sim => ({
           demographic: sim.demographic,
           reaction: sim.reaction,
           sentiment: sim.sentiment,
-          confidence: 0.85, // Mock confidence
-          culturalResonance: 0.9, // Mock cultural resonance
+          confidence: 0.85,
+          culturalResonance: 0.9,
         })),
         metadata: {
           generatedAt: new Date().toISOString(),
           processingTimeMs: Date.now() - startTime,
-          modelVersion: 'mock-bedrock-v1.0',
+          modelVersion: this.useGroq ? 'groq-llama-3.3-70b' : 'mock-bedrock-v1.0',
           personaVersion: persona.id,
         },
       };

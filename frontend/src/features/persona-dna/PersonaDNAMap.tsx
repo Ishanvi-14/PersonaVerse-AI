@@ -27,33 +27,33 @@ export function PersonaDNAMap({ persona, className = '' }: PersonaDNAMapProps) {
   // Transform persona data for radar chart
   const radarData = [
     {
-      attribute: 'Wit',
-      value: persona.emotionalBaseline.enthusiasmLevel,
+      attribute: 'Enthusiasm',
+      value: persona.emotionalBaseline?.enthusiasmLevel || 5,
       fullMark: 10,
     },
     {
       attribute: 'Hinglish Ratio',
-      value: persona.linguisticDNA.hinglishRatio * 10, // Convert to 0-10 scale
+      value: (persona.linguisticDNA?.hinglishRatio || 0.5) * 10, // Convert to 0-10 scale
       fullMark: 10,
     },
     {
       attribute: 'Empathy',
-      value: persona.emotionalBaseline.empathyLevel,
+      value: persona.emotionalBaseline?.empathyLevel || 5,
       fullMark: 10,
     },
     {
       attribute: 'Authority',
-      value: persona.emotionalBaseline.authorityLevel,
+      value: persona.emotionalBaseline?.authorityLevel || 5,
       fullMark: 10,
     },
     {
       attribute: 'Optimism',
-      value: persona.emotionalBaseline.optimismLevel,
+      value: persona.emotionalBaseline?.optimismLevel || 5,
       fullMark: 10,
     },
     {
       attribute: 'Formality',
-      value: persona.linguisticDNA.formalityLevel,
+      value: persona.linguisticDNA?.formalityLevel || 5,
       fullMark: 10,
     },
   ]
@@ -62,17 +62,17 @@ export function PersonaDNAMap({ persona, className = '' }: PersonaDNAMapProps) {
   const linguisticData = [
     {
       name: 'Hinglish Ratio',
-      value: persona.linguisticDNA.hinglishRatio,
+      value: persona.linguisticDNA?.hinglishRatio || 0.5,
       color: '#FF6B35',
     },
     {
       name: 'Formality',
-      value: persona.linguisticDNA.formalityLevel / 10,
+      value: (persona.linguisticDNA?.formalityLevel || 5) / 10,
       color: '#1A936F',
     },
     {
       name: 'Cadence',
-      value: persona.linguisticDNA.cadence === 'high' ? 0.8 : persona.linguisticDNA.cadence === 'medium' ? 0.6 : 0.4,
+      value: persona.linguisticDNA?.cadence === 'high' ? 0.8 : persona.linguisticDNA?.cadence === 'medium' ? 0.6 : 0.4,
       color: '#004E89',
     },
   ]
@@ -173,25 +173,25 @@ export function PersonaDNAMap({ persona, className = '' }: PersonaDNAMapProps) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center p-3 bg-gray-50 rounded-lg">
             <div className="text-2xl font-bold text-primary-600">
-              {formatPercentage(persona.linguisticDNA.hinglishRatio)}
+              {formatPercentage(persona.linguisticDNA?.hinglishRatio || 0.5)}
             </div>
             <div className="text-xs text-gray-600 mt-1">Hinglish Ratio</div>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-lg">
             <div className="text-2xl font-bold text-secondary-600">
-              {formatScore(persona.emotionalBaseline.empathyLevel / 10)}
+              {formatScore((persona.emotionalBaseline?.empathyLevel || 5) / 10)}
             </div>
             <div className="text-xs text-gray-600 mt-1">Empathy Level</div>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-lg">
             <div className="text-2xl font-bold text-accent-600">
-              {formatScore(persona.emotionalBaseline.authorityLevel / 10)}
+              {formatScore((persona.emotionalBaseline?.authorityLevel || 5) / 10)}
             </div>
             <div className="text-xs text-gray-600 mt-1">Authority</div>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-lg">
             <div className="text-2xl font-bold text-indigo-600">
-              {persona.linguisticDNA.cadence.toUpperCase()}
+              {(persona.linguisticDNA?.cadence || 'medium').toUpperCase()}
             </div>
             <div className="text-xs text-gray-600 mt-1">Cadence</div>
           </div>
@@ -203,16 +203,16 @@ export function PersonaDNAMap({ persona, className = '' }: PersonaDNAMapProps) {
         <h4 className="font-medium text-gray-900 mb-3">Cultural Alignment</h4>
         <div className="flex flex-wrap gap-2">
           <span className="px-3 py-1 bg-saffron/10 text-saffron-700 rounded-full text-sm font-medium">
-            {persona.valueConstraints.culturalAlignment}
+            {persona.valueConstraints?.culturalAlignment || 'bharat-first'}
           </span>
           <span className="px-3 py-1 bg-emerald/10 text-emerald-700 rounded-full text-sm font-medium">
-            {persona.linguisticDNA.vocabularyStyle}
+            {persona.linguisticDNA?.vocabularyStyle || 'conversational'}
           </span>
           <span className="px-3 py-1 bg-indigo/10 text-indigo-700 rounded-full text-sm font-medium">
-            {persona.linguisticDNA.sentenceStructure} sentences
+            {persona.linguisticDNA?.sentenceStructure || 'mixed'} sentences
           </span>
           <span className="px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-sm font-medium">
-            {persona.valueConstraints.riskTolerance} risk
+            {persona.valueConstraints?.riskTolerance || 'moderate'} risk
           </span>
         </div>
       </div>
@@ -221,12 +221,15 @@ export function PersonaDNAMap({ persona, className = '' }: PersonaDNAMapProps) {
       <div className="mt-4 pt-4 border-t border-gray-200">
         <h4 className="font-medium text-gray-900 mb-3">Core Beliefs</h4>
         <div className="space-y-2">
-          {persona.valueConstraints.coreBeliefs.slice(0, 3).map((belief, index) => (
+          {(persona.valueConstraints?.coreBeliefs || []).slice(0, 3).map((belief, index) => (
             <div key={index} className="flex items-start gap-2">
               <div className="w-1.5 h-1.5 bg-primary-500 rounded-full mt-2 flex-shrink-0" />
               <span className="text-sm text-gray-700">{belief}</span>
             </div>
           ))}
+          {(!persona.valueConstraints?.coreBeliefs || persona.valueConstraints.coreBeliefs.length === 0) && (
+            <p className="text-sm text-gray-500 italic">No core beliefs defined yet</p>
+          )}
         </div>
       </div>
     </motion.div>

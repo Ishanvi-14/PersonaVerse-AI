@@ -1,0 +1,87 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PersonaVerseS3Access",
+      "Effect": "Allow",
+      "Action": [
+        "s3:CreateBucket",
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject",
+        "s3:ListBucket",
+        "s3:PutBucketCors",
+        "s3:PutEncryptionConfiguration",
+        "s3:PutBucketVersioning"
+      ],
+      "Resource": [
+        "arn:aws:s3:::personaverse-*",
+        "arn:aws:s3:::personaverse-*/*"
+      ]
+    },
+    {
+      "Sid": "PersonaVerseDynamoDBAccess",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:CreateTable",
+        "dynamodb:DescribeTable",
+        "dynamodb:PutItem",
+        "dynamodb:GetItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:BatchGetItem"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:*:*:table/personaverse-*"
+      ]
+    },
+    {
+      "Sid": "PersonaVerseTranscribeAccess",
+      "Effect": "Allow",
+      "Action": [
+        "transcribe:StartTranscriptionJob",
+        "transcribe:GetTranscriptionJob",
+        "transcribe:ListTranscriptionJobs",
+        "transcribe:DeleteTranscriptionJob"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "PersonaVerseTranslateAccess",
+      "Effect": "Allow",
+      "Action": [
+        "translate:TranslateText",
+        "translate:ListLanguages"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "PersonaVerseComprehendAccess",
+      "Effect": "Allow",
+      "Action": [
+        "comprehend:DetectDominantLanguage",
+        "comprehend:DetectSentiment",
+        "comprehend:DetectEntities",
+        "comprehend:DetectKeyPhrases"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "PersonaVerseBedrockAccess",
+      "Effect": "Allow",
+      "Action": [
+        "bedrock:InvokeModel",
+        "bedrock:InvokeModelWithResponseStream",
+        "bedrock:ListFoundationModels",
+        "bedrock:GetFoundationModel"
+      ],
+      "Resource": [
+        "arn:aws:bedrock:*::foundation-model/anthropic.claude-*",
+        "arn:aws:bedrock:*::foundation-model/amazon.nova-*"
+      ]
+    }
+  ]
+}

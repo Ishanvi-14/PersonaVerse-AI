@@ -1,34 +1,58 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Brain, Sparkles, Users, Zap } from 'lucide-react'
+import { Brain, Sparkles, Users, Zap, LogOut, User as UserIcon, History as HistoryIcon } from 'lucide-react'
 import { PersonaDNAMap } from './features/persona-dna/PersonaDNAMap'
 import { IdentityDrivenEditor } from './components/IdentityDrivenEditor'
-import AdaptiveDashboard from './features/adaptive-intelligence/AdaptiveDashboard'
 import { WorkflowToolsTab } from './features/workflow-tools/WorkflowToolsTab'
-import { DistributionTab } from './features/distribution/DistributionTab'
+import { EnhancedContentCalendar } from './features/calendar/EnhancedContentCalendar'
+import { UserHistory } from './features/history/UserHistory'
 import { ThemeToggle } from './components/ThemeToggle'
+import { LoginPage } from './components/LoginPage'
+import { useAuth } from './contexts/AuthContext'
 import { personaService } from './services/personaService'
 import type { PersonaLayer } from '@backend/shared/persona.types'
 
 function App() {
+  const { user, isAuthenticated, isLoading, logout } = useAuth()
   const [selectedPersona, setSelectedPersona] = useState<PersonaLayer | null>(null)
   const [personas, setPersonas] = useState<PersonaLayer[]>([])
-  const [activeTab, setActiveTab] = useState<'editor' | 'dna' | 'adaptive' | 'workflow' | 'distribution'>('editor')
+  const [activeTab, setActiveTab] = useState<'editor' | 'dna' | 'workflow' | 'calendar' | 'history'>('editor')
 
+  // Load personas - must be called before any conditional returns
   useEffect(() => {
-    const loadPersonas = async () => {
-      try {
-        const personaList = await personaService.getPersonas()
-        setPersonas(personaList)
-        if (personaList.length > 0) {
-          setSelectedPersona(personaList[0])
+    if (isAuthenticated) {
+      const loadPersonas = async () => {
+        try {
+          const personaList = await personaService.getPersonas()
+          setPersonas(personaList)
+          if (personaList.length > 0) {
+            setSelectedPersona(personaList[0])
+          }
+        } catch (error) {
+          console.error('Failed to load personas:', error)
         }
-      } catch (error) {
-        console.error('Failed to load personas:', error)
       }
+      loadPersonas()
     }
-    loadPersonas()
-  }, [])
+  }, [isAuthenticated])
+
+  // Show login page if not authenticated
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-green-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-br from-orange-500 via-white to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse">
+            <Brain className="w-8 h-8 text-indigo-600" />
+          </div>
+          <p className="text-gray-600">Loading PersonaVerse...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!isAuthenticated) {
+    return <LoginPage />
+  }
 
   const features = [
     {
@@ -72,6 +96,17 @@ function App() {
             </div>
             
             <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 px-3 py-2 bg-theme-bg-tertiary rounded-lg">
+                <UserIcon className="w-4 h-4 text-theme-text-secondary" />
+                <span className="text-sm font-medium text-theme-text-primary">{user?.name}</span>
+              </div>
+              <button
+                onClick={logout}
+                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-theme-text-secondary hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                title="Logout"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
               <ThemeToggle />
               <div className="flex bg-theme-bg-tertiary rounded-lg p-1 shadow-sm">
                 <button
@@ -85,14 +120,14 @@ function App() {
                   Content Editor
                 </button>
                 <button
-                  onClick={() => setActiveTab('adaptive')}
+                  onClick={() => setActiveTab('calendar')}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                    activeTab === 'adaptive'
+                    activeTab === 'calendar'
                       ? 'bg-theme-primary text-white shadow-sm'
                       : 'text-theme-text-secondary hover:text-theme-text-primary hover:bg-theme-hover'
                   }`}
                 >
-                  Adaptive Intelligence
+                  Content Calendar
                 </button>
                 <button
                   onClick={() => setActiveTab('workflow')}
@@ -105,14 +140,15 @@ function App() {
                   Workflow Tools
                 </button>
                 <button
-                  onClick={() => setActiveTab('distribution')}
+                  onClick={() => setActiveTab('history')}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                    activeTab === 'distribution'
+                    activeTab === 'history'
                       ? 'bg-theme-primary text-white shadow-sm'
                       : 'text-theme-text-secondary hover:text-theme-text-primary hover:bg-theme-hover'
                   }`}
                 >
-                  Distribution
+                  <HistoryIcon className="w-4 h-4 inline mr-1" />
+                  History
                 </button>
                 <button
                   onClick={() => setActiveTab('dna')}
@@ -134,12 +170,12 @@ function App() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {activeTab === 'editor' ? (
           <IdentityDrivenEditor />
-        ) : activeTab === 'adaptive' ? (
-          <AdaptiveDashboard />
         ) : activeTab === 'workflow' ? (
           <WorkflowToolsTab />
-        ) : activeTab === 'distribution' ? (
-          <DistributionTab />
+        ) : activeTab === 'calendar' ? (
+          <EnhancedContentCalendar />
+        ) : activeTab === 'history' ? (
+          <UserHistory />
         ) : (
           <div className="space-y-8">
             <div className="text-center">

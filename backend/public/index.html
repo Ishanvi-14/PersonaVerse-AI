@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PersonaVerse API - Backend Running</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .status {
+            background: #10b981;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 30px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        .endpoint {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+        }
+        .method {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+        .get { background: #3b82f6; color: white; }
+        .post { background: #10b981; color: white; }
+        .url {
+            color: #667eea;
+            word-break: break-all;
+        }
+        .feature {
+            background: #fef3c7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #f59e0b;
+        }
+        .feature strong {
+            color: #92400e;
+        }
+        .cta {
+            background: #667eea;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        .cta:hover {
+            transform: translateY(-2px);
+            background: #5568d3;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e5e7eb;
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 PersonaVerse API</h1>
+        <p class="subtitle">Backend Server is Running Successfully!</p>
+        
+        <div class="status">
+            ✅ Server Status: HEALTHY
+        </div>
+
+        <div class="section">
+            <h2>🚀 Available Endpoints</h2>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="url">/health</span>
+                <div style="margin-top: 8px; color: #666; font-size: 0.9em;">Check server health status</div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="url">/api/generate</span>
+                <div style="margin-top: 8px; color: #666; font-size: 0.9em;">Legacy content generation</div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="url">/api/generate-adaptive</span>
+                <div style="margin-top: 8px; color: #666; font-size: 0.9em;">Adaptive intelligence generation</div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="url">/api/memory/:userId</span>
+                <div style="margin-top: 8px; color: #666; font-size: 0.9em;">Retrieve user memory profile</div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="url">/aws/voice-to-content</span>
+                <div style="margin-top: 8px; color: #666; font-size: 0.9em;">Voice-to-text with content generation</div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="url">/aws/generate</span>
+                <div style="margin-top: 8px; color: #666; font-size: 0.9em;">AWS-powered content generation</div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="url">/aws/history/:userId</span>
+                <div style="margin-top: 8px; color: #666; font-size: 0.9em;">User content history</div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="url">/aws/profile/:userId</span>
+                <div style="margin-top: 8px; color: #666; font-size: 0.9em;">User Digital Soul profile</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>✨ Features Ready</h2>
+            
+            <div class="feature">
+                <strong>🎤 Voice-to-Text:</strong> 10+ Indian languages with automatic detection
+            </div>
+            
+            <div class="feature">
+                <strong>🌍 Multilingual:</strong> Cultural transcreation with metaphor mapping
+            </div>
+            
+            <div class="feature">
+                <strong>🧠 AI Generation:</strong> Claude 4.5 via Amazon Bedrock
+            </div>
+            
+            <div class="feature">
+                <strong>💾 User History:</strong> DynamoDB + S3 storage with evolution tracking
+            </div>
+            
+            <div class="feature">
+                <strong>🎯 Persona System:</strong> Identity-consistent content generation
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📱 Access the Frontend</h2>
+            <p style="margin-bottom: 15px; color: #666;">
+                The backend API is working! Now open the frontend dashboard to use PersonaVerse:
+            </p>
+            <a href="http://localhost:3000" class="cta" target="_blank">
+                Open Frontend Dashboard →
+            </a>
+        </div>
+
+        <div class="footer">
+            <p><strong>PersonaVerse AI</strong> - Digital Identity System</p>
+            <p style="margin-top: 5px;">Built for AI for Bharat Hackathon - Track 2 🇮🇳</p>
+        </div>
+    </div>
+
+    <script>
+        // Test health endpoint
+        fetch('/health')
+            .then(res => res.json())
+            .then(data => {
+                console.log('✅ Backend health check:', data);
+            })
+            .catch(err => {
+                console.error('❌ Backend health check failed:', err);
+            });
+    </script>
+</body>
+</html>

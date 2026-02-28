@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test History Frontend</title>
+</head>
+<body>
+    <h1>PersonaVerse History Test</h1>
+    <button onclick="testHistory()">Load History</button>
+    <div id="result"></div>
+
+    <script>
+        async function testHistory() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Loading...';
+            
+            try {
+                const response = await fetch('http://localhost:3001/aws/history/demo-user');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const entries = data.data.entries || [];
+                    resultDiv.innerHTML = `
+                        <h2>✅ Success! Found ${entries.length} entries</h2>
+                        <ul>
+                            ${entries.map(entry => `
+                                <li>
+                                    <strong>${entry.platform}</strong> - ${entry.personaId}<br>
+                                    <em>${entry.output?.text?.substring(0, 100)}...</em><br>
+                                    <small>Score: ${entry.output?.confidence || 'N/A'} | ${new Date(entry.timestamp).toLocaleString()}</small>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `❌ Error: ${data.error}`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `❌ Network Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -45,6 +45,22 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
     formality: 6,
     authority: 6,
   })
+  const [targetLanguage, setTargetLanguage] = useState<string>('en')
+  const [translatedContent, setTranslatedContent] = useState<string | null>(null)
+  const [isTranslating, setIsTranslating] = useState(false)
+
+  const supportedLanguages = [
+    { code: 'en', name: 'English' },
+    { code: 'hi', name: 'Hindi' },
+    { code: 'ta', name: 'Tamil' },
+    { code: 'te', name: 'Telugu' },
+    { code: 'bn', name: 'Bengali' },
+    { code: 'mr', name: 'Marathi' },
+    { code: 'gu', name: 'Gujarati' },
+    { code: 'kn', name: 'Kannada' },
+    { code: 'ml', name: 'Malayalam' },
+    { code: 'pa', name: 'Punjabi' },
+  ]
 
   const platforms: { id: SupportedPlatform; name: string; description: string }[] = [
     { id: 'linkedin', name: 'LinkedIn', description: 'Professional networking' },
@@ -74,6 +90,7 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
     if (!selectedPersona || !inputContent.trim()) return
 
     setIsGenerating(true)
+    setTranslatedContent(null)
     try {
       const response = await personaService.generateContent({
         personaId: selectedPersona.id,
@@ -86,10 +103,59 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
         },
       })
       setGeneratedContent(response)
+      
+      // Save to history
+      await saveToHistory(response)
     } catch (error) {
       console.error('Failed to generate content:', error)
     } finally {
       setIsGenerating(false)
+    }
+  }
+
+  const handleTranslate = async () => {
+    if (!generatedContent || targetLanguage === 'en') return
+
+    setIsTranslating(true)
+    try {
+      const response = await fetch('http://localhost:3001/aws/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: generatedContent.generatedContent,
+          targetLanguage,
+          sourceLanguage: 'en',
+        }),
+      })
+
+      const data = await response.json()
+      if (data.success) {
+        setTranslatedContent(data.data.translatedText)
+      }
+    } catch (error) {
+      console.error('Translation failed:', error)
+    } finally {
+      setIsTranslating(false)
+    }
+  }
+
+  const saveToHistory = async (content: GenerationResponse) => {
+    try {
+      await fetch('http://localhost:3001/aws/history', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: 'demo-user',
+          personaId: selectedPersona?.id,
+          platform: selectedPlatform,
+          inputContent,
+          generatedContent: content.generatedContent,
+          personaAlignmentScore: content.personaAlignmentScore,
+          metadata: content.metadata,
+        }),
+      })
+    } catch (error) {
+      console.error('Failed to save history:', error)
     }
   }
 
@@ -320,6 +386,49 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
                   <p className="text-theme-text-primary leading-relaxed">
                     {generatedContent.generatedContent}
                   </p>
+                </div>
+
+                {/* Translation Section */}
+                <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="font-medium text-blue-900 flex items-center gap-2">
+                      <span>🌐</span>
+                      AWS Translate (Cultural Transcreation)
+                    </h4>
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={targetLanguage}
+                        onChange={(e) => setTargetLanguage(e.target.value)}
+                        className="px-3 py-1 border border-blue-300 rounded-lg text-sm bg-white"
+                      >
+                        {supportedLanguages.map(lang => (
+                          <option key={lang.code} value={lang.code}>{lang.name}</option>
+                        ))}
+                      </select>
+                      <button
+                        onClick={handleTranslate}
+                        disabled={isTranslating || targetLanguage === 'en'}
+                        className={cn(
+                          'px-4 py-1 rounded-lg text-sm font-medium transition-colors',
+                          isTranslating || targetLanguage === 'en'
+                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                            : 'bg-blue-600 text-white hover:bg-blue-700'
+                        )}
+                      >
+                        {isTranslating ? 'Translating...' : 'Translate'}
+                      </button>
+                    </div>
+                  </div>
+                  {translatedContent && (
+                    <div className="p-3 bg-white border border-blue-300 rounded-lg">
+                      <p className="text-gray-800 leading-relaxed">{translatedContent}</p>
+                    </div>
+                  )}
+                  {!translatedContent && targetLanguage !== 'en' && (
+                    <p className="text-sm text-blue-700 italic">
+                      Select a language and click Translate to see culturally adapted version
+                    </p>
+                  )}
                 </div>
 
                 {/* Platform Formatting Section */}

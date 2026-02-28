@@ -13,13 +13,18 @@ import { ToolsConfig } from './types';
  * @returns {ToolsConfig} Complete configuration object
  */
 export function loadConfig(): ToolsConfig {
-  // Default to mock mode if MOCK_MODE is not explicitly set to 'false'
-  const mockMode = process.env.MOCK_MODE !== 'false';
+  // Check if we have Groq API key (use it instead of Gemini)
+  const groqApiKey = process.env.GROQ_API_KEY || '';
+  const geminiApiKey = process.env.GEMINI_API_KEY || '';
+  
+  // Use Groq if available, otherwise Gemini, otherwise mock mode
+  const apiKey = groqApiKey || geminiApiKey;
+  const mockMode = !apiKey; // Only use mock if no API key available
   
   const config: ToolsConfig = {
     gemini: {
-      apiKey: process.env.GEMINI_API_KEY || '',
-      model: process.env.GEMINI_MODEL || 'gemini-pro',
+      apiKey: apiKey,
+      model: groqApiKey ? 'llama-3.3-70b-versatile' : (process.env.GEMINI_MODEL || 'gemini-pro'),
       timeouts: {
         simplifier: 30000,  // 30 seconds
         calendar: 30000,    // 30 seconds
@@ -52,8 +57,9 @@ export function loadConfig(): ToolsConfig {
   };
 
   console.log('[Workflow Tools] Configuration loaded:');
-  console.log(`  - Mock Mode: ${config.mock.enabled ? '✓ ENABLED (Credit Discipline)' : '✗ DISABLED (Live API)'}`);
-  console.log(`  - Gemini API Key: ${config.gemini.apiKey ? '✓ Configured' : '✗ Not Set'}`);
+  console.log(`  - Mock Mode: ${config.mock.enabled ? '✓ ENABLED (No API Key)' : '✗ DISABLED (Live API)'}`);
+  console.log(`  - API Key: ${config.gemini.apiKey ? '✓ Configured (Groq)' : '✗ Not Set'}`);
+  console.log(`  - Model: ${config.gemini.model}`);
 
   return config;
 }

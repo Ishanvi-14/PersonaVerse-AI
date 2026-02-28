@@ -1,9 +1,8 @@
 /**
- * Frontend service to interact with the mock Persona Engine
- * This service provides a clean interface to the backend mock provider
+ * Frontend service to interact with the Persona Engine API
+ * This service provides a clean interface to the backend API
  */
 
-import { MockBedrockProvider } from '@backend/services/persona-engine/__mocks__/bedrockProvider'
 import type {
   PersonaLayer,
   GenerationRequest,
@@ -13,78 +12,160 @@ import type {
   ApiResponse,
 } from '@backend/shared/persona.types'
 
-class PersonaService {
-  private mockProvider: MockBedrockProvider
+const API_BASE_URL = 'http://localhost:3001';
 
-  constructor() {
-    this.mockProvider = new MockBedrockProvider()
-  }
+class PersonaService {
+  private mockPersonas: PersonaLayer[] = [
+    {
+      id: 'founder',
+      name: 'Founder Voice',
+      userId: 'demo-user',
+      description: 'Visionary, bold, and inspiring',
+      linguisticDNA: {
+        hinglishRatio: 0.3,
+        cadence: 'high',
+        formalityLevel: 7,
+        preferredMetaphors: ['cricket', 'business', 'startup'],
+        sentenceStructure: 'complex',
+        vocabularyStyle: 'technical',
+      },
+      valueConstraints: {
+        coreBeliefs: ['Innovation over tradition', 'Move fast and build', 'Bharat-first mindset'],
+        avoidedTopics: ['Politics', 'Religion'],
+        riskTolerance: 'bold',
+        culturalAlignment: 'bharat-first',
+      },
+      emotionalBaseline: {
+        optimismLevel: 9,
+        authorityLevel: 8,
+        enthusiasmLevel: 9,
+        empathyLevel: 7,
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    {
+      id: 'educator',
+      name: 'Educator Voice',
+      userId: 'demo-user',
+      description: 'Patient, clear, and encouraging',
+      linguisticDNA: {
+        hinglishRatio: 0.5,
+        cadence: 'medium',
+        formalityLevel: 6,
+        preferredMetaphors: ['learning', 'journey', 'growth'],
+        sentenceStructure: 'simple',
+        vocabularyStyle: 'conversational',
+      },
+      valueConstraints: {
+        coreBeliefs: ['Learning is a journey', 'Everyone can grow', 'Knowledge should be accessible'],
+        avoidedTopics: ['Controversial politics'],
+        riskTolerance: 'safe',
+        culturalAlignment: 'bharat-first',
+      },
+      emotionalBaseline: {
+        optimismLevel: 8,
+        authorityLevel: 7,
+        enthusiasmLevel: 7,
+        empathyLevel: 9,
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    {
+      id: 'friend',
+      name: 'Friend Voice',
+      userId: 'demo-user',
+      description: 'Casual, warm, and relatable',
+      linguisticDNA: {
+        hinglishRatio: 0.7,
+        cadence: 'medium',
+        formalityLevel: 3,
+        preferredMetaphors: ['cricket', 'movies', 'food'],
+        sentenceStructure: 'simple',
+        vocabularyStyle: 'street',
+      },
+      valueConstraints: {
+        coreBeliefs: ['Authenticity matters', 'Real talk only', 'Community first'],
+        avoidedTopics: ['Corporate jargon'],
+        riskTolerance: 'moderate',
+        culturalAlignment: 'regional',
+      },
+      emotionalBaseline: {
+        optimismLevel: 8,
+        authorityLevel: 5,
+        enthusiasmLevel: 8,
+        empathyLevel: 9,
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+  ];
 
   async getPersonas(): Promise<PersonaLayer[]> {
-    return await this.mockProvider.listPersonas()
+    // Return mock personas (backend doesn't have a list endpoint yet)
+    return this.mockPersonas;
   }
 
   async getPersona(personaId: string): Promise<PersonaLayer | null> {
-    return await this.mockProvider.getPersona(personaId)
+    // Return mock persona (backend doesn't have a get endpoint yet)
+    return this.mockPersonas.find(p => p.id === personaId) || null;
   }
 
   async generateContent(request: Omit<GenerationRequest, 'userId'>): Promise<GenerationResponse> {
-    const mockResponse = await this.mockProvider.generateContent(request)
-    
-    return {
-      id: `gen_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      generatedContent: mockResponse.generatedContent,
-      personaAlignmentScore: mockResponse.personaAlignmentScore,
-      voiceDriftAlert: mockResponse.voiceDriftAlert,
-      audienceSimulation: mockResponse.audienceSimulation?.map(sim => ({
-        demographic: sim.demographic,
-        reaction: sim.reaction,
-        sentiment: sim.sentiment,
-        confidence: 0.85,
-        culturalResonance: 0.9,
-      })),
-      metadata: {
-        generatedAt: new Date().toISOString(),
-        processingTimeMs: 150, // Mock processing time
-        modelVersion: 'mock-bedrock-v1.0',
-        personaVersion: request.personaId,
-      },
+    try {
+      // Call backend API
+      const response = await fetch(`${API_BASE_URL}/api/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: 'demo-user',
+          ...request,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.error?.message || 'Generation failed');
+      }
+
+      return data.data;
+    } catch (error) {
+      console.error('[PersonaService] Generation failed:', error);
+      throw error;
     }
   }
 
   async extractIdentity(request: Omit<IdentityExtractionRequest, 'userId'>): Promise<IdentityExtractionResponse> {
-    const extraction = await this.mockProvider.extractIdentityVector(
-      request.content,
-      request.mediaType
-    )
-
+    // Mock implementation (backend doesn't have this endpoint yet)
     return {
       extractionId: `ext_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       linguisticFingerprint: {
-        cadence: extraction.linguisticFingerprint.cadence,
-        hinglishRatio: extraction.linguisticFingerprint.hinglishRatio,
-        sentimentBias: extraction.linguisticFingerprint.sentimentBias,
-        preferredPhrases: extraction.linguisticFingerprint.preferredPhrases,
+        cadence: 'conversational',
+        hinglishRatio: 0.5,
+        sentimentBias: 'neutral',
+        preferredPhrases: ['basically', 'actually', 'you know'],
         vocabularyComplexity: 'moderate',
         culturalMarkers: ['Bharat-centric', 'Cricket metaphors', 'Jugaad philosophy'],
       },
-      canonicalValues: extraction.canonicalValues,
-      visualStyle: extraction.visualStyle ? {
-        aestheticType: extraction.visualStyle,
+      canonicalValues: ['Authenticity', 'Innovation', 'Community'],
+      visualStyle: {
+        aestheticType: 'modern',
         colorPalette: ['#FF6B35', '#004E89', '#1A936F'],
         styleKeywords: ['vibrant', 'urban', 'authentic'],
-      } : undefined,
+      },
       confidence: {
         linguistic: 0.87,
         values: 0.82,
-        visual: extraction.visualStyle ? 0.79 : undefined,
+        visual: 0.79,
       },
       metadata: {
         extractedAt: new Date().toISOString(),
         processingTimeMs: 200,
         contentLength: request.content.length,
       },
-    }
+    };
   }
 
   async simulateAudience(content: string, platform: string) {
@@ -104,7 +185,7 @@ class PersonaService {
         confidence: 0.85,
         culturalResonance: 0.87,
       },
-    ]
+    ];
   }
 }
 

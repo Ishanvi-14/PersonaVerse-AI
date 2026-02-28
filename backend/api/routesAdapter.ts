@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import cookieParser from 'cookie-parser';
 import { PersonaService } from '../services/persona-engine/personaService';
 import { AdaptiveWrapper } from '../engines/adaptiveWrapper';
 import { UserMemory } from '../memory/userMemory';
@@ -201,12 +202,17 @@ export function createApp(config: AdaptiveConfig): express.Application {
   const app = express();
   
   app.use(express.json());
+  app.use(cookieParser());
+  
+  // Serve static files from public directory
+  app.use(express.static('public'));
   
   // CORS for frontend (Bharat-first: support local development)
   app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Credentials', 'true');
     
     if (req.method === 'OPTIONS') {
       res.sendStatus(200);
@@ -251,6 +257,78 @@ export function createApp(config: AdaptiveConfig): express.Application {
     console.error('❌ Voice-to-Text Service failed to load:');
     console.error(error);
     console.log('ℹ Voice-to-Text Service not available (optional module)');
+  }
+
+  // Mount AWS-powered routes (production features)
+  try {
+    console.log('[Server] Attempting to load AWS Services...');
+    const awsRoutes = require('./awsRoutes').default;
+    app.use('/aws', awsRoutes);
+    console.log('✓ AWS Services loaded successfully');
+  } catch (error) {
+    console.error('❌ AWS Services failed to load:');
+    console.error(error);
+    console.log('ℹ AWS Services not available (check AWS credentials in .env)');
+  }
+
+  // Mount authentication routes
+  try {
+    console.log('[Server] Attempting to load Authentication Service...');
+    const authRoutes = require('./authRoutes').default;
+    app.use('/api/auth', authRoutes);
+    console.log('✓ Authentication Service loaded successfully');
+  } catch (error) {
+    console.error('❌ Authentication Service failed to load:');
+    console.error(error);
+    console.log('ℹ Authentication Service not available');
+  }
+
+  // Mount calendar routes
+  try {
+    console.log('[Server] Attempting to load Calendar Service...');
+    const calendarRoutes = require('./calendarRoutes').default;
+    app.use('/api/calendar', calendarRoutes);
+    console.log('✓ Calendar Service loaded successfully');
+  } catch (error) {
+    console.error('❌ Calendar Service failed to load:');
+    console.error(error);
+    console.log('ℹ Calendar Service not available');
+  }
+
+  // Initialize Email and Scheduler Services
+  try {
+    console.log('[Server] Attempting to load Email & Scheduler Services...');
+    const { emailService } = require('../services/email/emailService');
+    const { schedulerService } = require('../services/email/schedulerService');
+    
+    // Test email connection
+    emailService.testConnection().then((connected: boolean) => {
+      if (connected) {
+        console.log('✓ Email Service connected and ready');
+      } else {
+        console.log('ℹ Email Service configured but not connected (check credentials)');
+      }
+    });
+    
+    console.log('✓ Email & Scheduler Services loaded successfully');
+  } catch (error) {
+    console.error('❌ Email & Scheduler Services failed to load:');
+    console.error(error);
+    console.log('ℹ Email & Scheduler Services not available');
+  }
+
+  // Mount email test routes (development only)
+  if (process.env.NODE_ENV !== 'production') {
+    try {
+      console.log('[Server] Attempting to load Email Test Routes...');
+      const emailTestRoutes = require('./emailTestRoutes').default;
+      app.use('/test/email', emailTestRoutes);
+      console.log('✓ Email Test Routes loaded successfully');
+    } catch (error) {
+      console.error('❌ Email Test Routes failed to load:');
+      console.error(error);
+      console.log('ℹ Email Test Routes not available');
+    }
   }
 
   // Health check
