@@ -18,6 +18,7 @@ import { VoiceInput } from './VoiceInput'
 import { DownloadAsImage } from '../features/distribution/DownloadAsImage'
 import { PlatformFormatter } from '../features/distribution/PlatformFormatter'
 import { RemixModal } from '../features/distribution/RemixModal'
+import { useAuth } from '../contexts/AuthContext'
 
 interface IdentityDrivenEditorProps {
   className?: string
@@ -31,6 +32,7 @@ interface EmotionSliders {
 }
 
 export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorProps) {
+  const { user } = useAuth();
   const [personas, setPersonas] = useState<PersonaLayer[]>([])
   const [selectedPersona, setSelectedPersona] = useState<PersonaLayer | null>(null)
   const [selectedPlatform, setSelectedPlatform] = useState<SupportedPlatform>('linkedin')
@@ -140,12 +142,17 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
   }
 
   const saveToHistory = async (content: GenerationResponse) => {
+    if (!user?.userId) {
+      console.warn('Cannot save history: user not authenticated');
+      return;
+    }
+
     try {
       await fetch('http://localhost:3001/aws/history', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userId: 'demo-user',
+          userId: user.userId,
           personaId: selectedPersona?.id,
           platform: selectedPlatform,
           inputContent,

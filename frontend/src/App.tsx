@@ -8,6 +8,7 @@ import { EnhancedContentCalendar } from './features/calendar/EnhancedContentCale
 import { UserHistory } from './features/history/UserHistory'
 import { ThemeToggle } from './components/ThemeToggle'
 import { LoginPage } from './components/LoginPage'
+import { ChatbotAssistant } from './components/ChatbotAssistant'
 import { useAuth } from './contexts/AuthContext'
 import { personaService } from './services/personaService'
 import type { PersonaLayer } from '@backend/shared/persona.types'
@@ -80,70 +81,71 @@ function App() {
   return (
     <div className="min-h-screen bg-theme-bg-primary transition-colors duration-200">
       {/* Header */}
-      <header className="bg-theme-surface shadow-sm border-b border-theme-border sticky top-0 z-50 backdrop-blur-sm bg-opacity-95">
+      <header className="bg-theme-surface shadow-lg border-b border-theme-border sticky top-0 z-50 backdrop-blur-md bg-opacity-98">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-saffron to-primary-600 rounded-lg flex items-center justify-center shadow-md">
-                <Brain className="w-5 h-5 text-white" />
+          <div className="flex items-center justify-between h-20">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-saffron via-orange-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform duration-200">
+                <Brain className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-display font-bold text-theme-text-primary">
+                <h1 className="text-2xl font-display font-bold text-theme-text-primary tracking-tight">
                   PersonaVerse AI
                 </h1>
-                <p className="text-sm text-theme-text-secondary">Digital Identity System</p>
+                <p className="text-xs text-theme-text-secondary font-medium">Digital Identity System for Bharat</p>
               </div>
             </div>
             
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-3 px-3 py-2 bg-theme-bg-tertiary rounded-lg">
+              <div className="flex items-center gap-3 px-4 py-2.5 bg-gradient-to-r from-theme-bg-tertiary to-theme-hover rounded-xl border border-theme-border shadow-sm">
                 <UserIcon className="w-4 h-4 text-theme-text-secondary" />
-                <span className="text-sm font-medium text-theme-text-primary">{user?.name}</span>
+                <span className="text-sm font-semibold text-theme-text-primary">{user?.name}</span>
               </div>
               <button
                 onClick={logout}
-                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-theme-text-secondary hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-theme-text-secondary hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200 border border-transparent hover:border-red-200"
                 title="Logout"
               >
                 <LogOut className="w-4 h-4" />
+                <span className="hidden sm:inline">Logout</span>
               </button>
               <ThemeToggle />
-              <div className="flex bg-theme-bg-tertiary rounded-lg p-1 shadow-sm">
+              <div className="flex bg-theme-bg-tertiary rounded-xl p-1.5 shadow-md border border-theme-border">
                 <button
                   onClick={() => setActiveTab('editor')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                  className={`px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
                     activeTab === 'editor'
-                      ? 'bg-theme-primary text-white shadow-sm'
+                      ? 'bg-gradient-to-r from-saffron to-orange-500 text-white shadow-md'
                       : 'text-theme-text-secondary hover:text-theme-text-primary hover:bg-theme-hover'
                   }`}
                 >
-                  Content Editor
+                  Editor
                 </button>
                 <button
                   onClick={() => setActiveTab('calendar')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                  className={`px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
                     activeTab === 'calendar'
-                      ? 'bg-theme-primary text-white shadow-sm'
+                      ? 'bg-gradient-to-r from-saffron to-orange-500 text-white shadow-md'
                       : 'text-theme-text-secondary hover:text-theme-text-primary hover:bg-theme-hover'
                   }`}
                 >
-                  Content Calendar
+                  Calendar
                 </button>
                 <button
                   onClick={() => setActiveTab('workflow')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                  className={`px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
                     activeTab === 'workflow'
-                      ? 'bg-theme-primary text-white shadow-sm'
+                      ? 'bg-gradient-to-r from-saffron to-orange-500 text-white shadow-md'
                       : 'text-theme-text-secondary hover:text-theme-text-primary hover:bg-theme-hover'
                   }`}
                 >
-                  Workflow Tools
+                  Tools
                 </button>
                 <button
                   onClick={() => setActiveTab('history')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                  className={`px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
                     activeTab === 'history'
-                      ? 'bg-theme-primary text-white shadow-sm'
+                      ? 'bg-gradient-to-r from-saffron to-orange-500 text-white shadow-md'
                       : 'text-theme-text-secondary hover:text-theme-text-primary hover:bg-theme-hover'
                   }`}
                 >
@@ -152,13 +154,13 @@ function App() {
                 </button>
                 <button
                   onClick={() => setActiveTab('dna')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                  className={`px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
                     activeTab === 'dna'
-                      ? 'bg-theme-primary text-white shadow-sm'
+                      ? 'bg-gradient-to-r from-saffron to-orange-500 text-white shadow-md'
                       : 'text-theme-text-secondary hover:text-theme-text-primary hover:bg-theme-hover'
                   }`}
                 >
-                  DNA Analysis
+                  DNA
                 </button>
               </div>
             </div>
@@ -178,25 +180,33 @@ function App() {
           <UserHistory />
         ) : (
           <div className="space-y-8">
-            <div className="text-center">
-              <h2 className="text-3xl font-display font-bold text-theme-text-primary mb-2">
+            <motion.div 
+              className="text-center"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-saffron/20 via-primary-100 to-emerald/20 rounded-2xl mb-4 shadow-lg">
+                <Brain className="w-8 h-8 text-primary-600" />
+              </div>
+              <h2 className="text-4xl font-display font-bold text-theme-text-primary mb-3">
                 Persona DNA Analysis
               </h2>
-              <p className="text-theme-text-secondary">
+              <p className="text-lg text-theme-text-secondary max-w-2xl mx-auto">
                 Deep dive into the linguistic and cultural fingerprints of each persona
               </p>
-            </div>
+            </motion.div>
 
             {/* Persona Selector for DNA View */}
             <div className="flex justify-center">
-              <div className="flex bg-theme-surface rounded-lg p-1 shadow-sm border border-theme-border">
+              <div className="flex bg-theme-surface rounded-xl p-2 shadow-lg border border-theme-border">
                 {personas.map((persona) => (
                   <button
                     key={persona.id}
                     onClick={() => setSelectedPersona(persona)}
-                    className={`px-6 py-3 rounded-md text-sm font-medium transition-all duration-200 ${
+                    className={`px-8 py-3 rounded-lg text-sm font-semibold transition-all duration-200 ${
                       selectedPersona?.id === persona.id
-                        ? 'bg-theme-primary text-white shadow-sm'
+                        ? 'bg-gradient-to-r from-saffron to-orange-500 text-white shadow-md transform scale-105'
                         : 'text-theme-text-secondary hover:text-theme-text-primary hover:bg-theme-hover'
                     }`}
                   >
@@ -216,13 +226,19 @@ function App() {
         {/* Features Section */}
         <div className="mt-16">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-display font-bold text-theme-text-primary mb-4">
-              AI for Bharat: Beyond Translation
-            </h2>
-            <p className="text-theme-text-secondary max-w-2xl mx-auto">
-              PersonaVerse doesn't just translate—it transcreates. Experience authentic 
-              digital identity that scales without losing your soul.
-            </p>
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <h2 className="text-3xl font-display font-bold text-theme-text-primary mb-4">
+                Powered by Advanced AI Technology
+              </h2>
+              <p className="text-lg text-theme-text-secondary max-w-3xl mx-auto">
+                PersonaVerse leverages cutting-edge AI to create authentic digital identities 
+                that preserve your unique voice, cultural context, and personal brand across all platforms.
+              </p>
+            </motion.div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -232,46 +248,53 @@ function App() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="card text-center hover:shadow-lg transition-shadow duration-200"
+                className="group relative card text-center hover:shadow-2xl hover:scale-105 transition-all duration-300 overflow-hidden"
               >
-                <div className="w-12 h-12 bg-gradient-to-br from-primary-100 to-primary-200 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <feature.icon className="w-6 h-6 text-primary-600" />
+                <div className="absolute inset-0 bg-gradient-to-br from-saffron/5 via-transparent to-emerald/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative z-10">
+                  <div className="w-16 h-16 bg-gradient-to-br from-saffron/20 via-primary-100 to-emerald/20 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                    <feature.icon className="w-8 h-8 text-primary-600" />
+                  </div>
+                  <h3 className="font-bold text-lg text-theme-text-primary mb-3">{feature.title}</h3>
+                  <p className="text-sm text-theme-text-secondary leading-relaxed">{feature.description}</p>
                 </div>
-                <h3 className="font-semibold text-theme-text-primary mb-2">{feature.title}</h3>
-                <p className="text-sm text-theme-text-secondary">{feature.description}</p>
               </motion.div>
             ))}
           </div>
         </div>
 
-        {/* Demo Script Callout */}
+        {/* Stats Section */}
         <div className="mt-16">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="bg-gradient-to-r from-saffron/10 via-primary-100/50 to-emerald/10 rounded-2xl p-8 text-center border border-theme-border shadow-lg"
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="bg-gradient-to-r from-saffron/10 via-primary-50/50 to-emerald/10 rounded-3xl p-10 border border-theme-border shadow-xl"
           >
-            <h3 className="text-xl font-display font-bold text-theme-text-primary mb-4">
-              Experience the "Sixer Rule" Demo
-            </h3>
-            <p className="text-theme-text-secondary mb-6 max-w-2xl mx-auto">
-              Try entering "We need to work hard to achieve our quarterly goals" and watch 
-              how the Founder persona transforms it into authentic Bharat language with 
-              cricket metaphors and cultural resonance.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4 text-sm">
-              <div className="flex items-center gap-2 bg-theme-surface/50 px-4 py-2 rounded-lg border border-theme-border">
-                <div className="w-2 h-2 bg-saffron rounded-full"></div>
-                <span className="text-theme-text-primary">Western → Indian metaphors</span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+              <div className="space-y-2">
+                <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-saffron to-orange-600">
+                  10+
+                </div>
+                <div className="text-sm font-medium text-theme-text-secondary uppercase tracking-wide">
+                  Indian Languages Supported
+                </div>
               </div>
-              <div className="flex items-center gap-2 bg-theme-surface/50 px-4 py-2 rounded-lg border border-theme-border">
-                <div className="w-2 h-2 bg-emerald rounded-full"></div>
-                <span className="text-theme-text-primary">Authentic Hinglish integration</span>
+              <div className="space-y-2">
+                <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-600">
+                  AI-Powered
+                </div>
+                <div className="text-sm font-medium text-theme-text-secondary uppercase tracking-wide">
+                  Cultural Transcreation Engine
+                </div>
               </div>
-              <div className="flex items-center gap-2 bg-theme-surface/50 px-4 py-2 rounded-lg border border-theme-border">
-                <div className="w-2 h-2 bg-indigo rounded-full"></div>
-                <span className="text-theme-text-primary">Cultural resonance scoring</span>
+              <div className="space-y-2">
+                <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald to-green-600">
+                  Real-Time
+                </div>
+                <div className="text-sm font-medium text-theme-text-secondary uppercase tracking-wide">
+                  Voice & Identity Analysis
+                </div>
               </div>
             </div>
           </motion.div>
@@ -279,18 +302,38 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-theme-surface border-t border-theme-border mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center text-theme-text-secondary">
-            <p className="mb-2">
-              Built for <strong className="text-theme-text-primary">AI for Bharat Hackathon</strong> • Track 2: Digital Identity
+      <footer className="bg-gradient-to-r from-theme-surface via-theme-bg-secondary to-theme-surface border-t border-theme-border mt-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <div className="text-center space-y-4">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-gradient-to-br from-saffron via-orange-500 to-emerald rounded-xl flex items-center justify-center shadow-lg">
+                <Brain className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-xl font-display font-bold text-theme-text-primary">PersonaVerse AI</span>
+            </div>
+            <p className="text-theme-text-secondary max-w-2xl mx-auto">
+              Built for <strong className="text-transparent bg-clip-text bg-gradient-to-r from-saffron to-emerald font-semibold">AI for Bharat Hackathon</strong> • Track 2: Digital Identity
             </p>
-            <p className="text-sm">
-              Powered by AWS Bedrock, Claude 4.5, and Amazon Nova • Mock Provider Active
-            </p>
+            <div className="flex flex-wrap justify-center gap-3 text-sm pt-4">
+              <span className="px-4 py-2 bg-theme-bg-tertiary rounded-lg border border-theme-border text-theme-text-secondary">
+                AWS Bedrock
+              </span>
+              <span className="px-4 py-2 bg-theme-bg-tertiary rounded-lg border border-theme-border text-theme-text-secondary">
+                Claude 4.5
+              </span>
+              <span className="px-4 py-2 bg-theme-bg-tertiary rounded-lg border border-theme-border text-theme-text-secondary">
+                Amazon Transcribe
+              </span>
+              <span className="px-4 py-2 bg-theme-bg-tertiary rounded-lg border border-theme-border text-theme-text-secondary">
+                Amazon Translate
+              </span>
+            </div>
           </div>
         </div>
       </footer>
+
+      {/* Chatbot Assistant */}
+      <ChatbotAssistant />
     </div>
   )
 }

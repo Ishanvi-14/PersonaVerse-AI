@@ -11,6 +11,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, User, Target, TrendingUp, Download, Filter } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface HistoryEntry {
   entryId: string;
@@ -33,6 +34,7 @@ interface HistoryEntry {
 }
 
 export function UserHistory() {
+  const { user } = useAuth();
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,15 +42,23 @@ export function UserHistory() {
   const [filterPlatform, setFilterPlatform] = useState<string>('all');
 
   useEffect(() => {
-    loadHistory();
-  }, []);
+    if (user?.userId) {
+      loadHistory();
+    }
+  }, [user?.userId]);
 
   const loadHistory = async () => {
+    if (!user?.userId) {
+      setError('User not authenticated');
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
     
     try {
-      const response = await fetch('http://localhost:3001/aws/history/demo-user');
+      const response = await fetch(`http://localhost:3001/aws/history/${user.userId}`);
       const data = await response.json();
 
       if (data.success) {

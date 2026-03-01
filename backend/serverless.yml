@@ -1,0 +1,397 @@
+service: personaverse-ai
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-south-1
+  stage: ${opt:stage, 'dev'}
+  memorySize: 512
+  timeout: 30
+  
+  # Environment variables for all functions
+  environment:
+    STAGE: ${self:provider.stage}
+    DYNAMODB_TABLE_USERS: ${self:service}-users-${self:provider.stage}
+    DYNAMODB_TABLE_CALENDAR: ${self:service}-calendar-${self:provider.stage}
+    DYNAMODB_TABLE_HISTORY: ${self:service}-history-${self:provider.stage}
+    DYNAMODB_TABLE_PERSONAS: ${self:service}-personas-${self:provider.stage}
+    S3_BUCKET_NAME: ${self:service}-storage-${self:provider.stage}
+    JWT_SECRET: ${ssm:/personaverse/${self:provider.stage}/jwt-secret}
+    GROQ_API_KEY: ${ssm:/personaverse/${self:provider.stage}/groq-api-key}
+    EMAIL_USER: ${ssm:/personaverse/${self:provider.stage}/email-user}
+    EMAIL_PASS: ${ssm:/personaverse/${self:provider.stage}/email-pass}
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+  
+  # IAM permissions
+  iam:
+    role:
+      statements:
+        # DynamoDB permissions
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:service}-*-${self:provider.stage}
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:service}-*-${self:provider.stage}/index/*
+        
+        # S3 permissions
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:DeleteObject
+          Resource:
+            - arn:aws:s3:::${self:service}-storage-${self:provider.stage}/*
+        
+        # Bedrock permissions
+        - Effect: Allow
+          Action:
+            - bedrock:InvokeModel
+            - bedrock:InvokeModelWithResponseStream
+          Resource:
+            - arn:aws:bedrock:*::foundation-model/*
+        
+        # Transcribe permissions
+        - Effect: Allow
+          Action:
+            - transcribe:StartTranscriptionJob
+            - transcribe:GetTranscriptionJob
+          Resource: '*'
+        
+        # Translate permissions
+        - Effect: Allow
+          Action:
+            - translate:TranslateText
+          Resource: '*'
+        
+        # Comprehend permissions
+        - Effect: Allow
+          Action:
+            - comprehend:DetectSentiment
+            - comprehend:DetectDominantLanguage
+          Resource: '*'
+        
+        # SSM Parameter Store
+        - Effect: Allow
+          Action:
+            - ssm:GetParameter
+            - ssm:GetParameters
+          Resource:
+            - arn:aws:ssm:${self:provider.region}:*:parameter/personaverse/${self:provider.stage}/*
+
+  # API Gateway configuration
+  apiGateway:
+    shouldStartNameWithService: true
+    cors:
+      origin: '*'
+      headers:
+        - Content-Type
+        - Authorization
+        - X-Amz-Date
+        - X-Api-Key
+        - X-Amz-Security-Token
+      allowCredentials: false
+
+# Lambda functions
+functions:
+  # Health check
+  health:
+    handler: dist/lambda/health.handler
+    events:
+      - http:
+          path: /health
+          method: get
+          cors: true
+
+  # Authentication
+  register:
+    handler: dist/lambda/auth.register
+    events:
+      - http:
+          path: /api/auth/register
+          method: post
+          cors: true
+
+  login:
+    handler: dist/lambda/auth.login
+    events:
+      - http:
+          path: /api/auth/login
+          method: post
+          cors: true
+
+  # Content Generation
+  generateContent:
+    handler: dist/lambda/content.generate
+    timeout: 60
+    memorySize: 1024
+    events:
+      - http:
+          path: /api/generate
+          method: post
+          cors: true
+          authorizer:
+            name: authorizerFunc
+            type: request
+
+  # Calendar Management
+  createSchedule:
+    handler: dist/lambda/calendar.create
+    events:
+      - http:
+          path: /api/calendar/schedule
+          method: post
+          cors: true
+          authorizer:
+            name: authorizerFunc
+            type: request
+
+  getSchedules:
+    handler: dist/lambda/calendar.list
+    events:
+      - http:
+          path: /api/calendar/schedules
+          method: get
+          cors: true
+          authorizer:
+            name: authorizerFunc
+            type: request
+
+  updateSchedule:
+    handler: dist/lambda/calendar.update
+    events:
+      - http:
+          path: /api/calendar/schedules/{id}
+          method: put
+          cors: true
+          authorizer:
+            name: authorizerFunc
+            type: request
+
+  deleteSchedule:
+    handler: dist/lambda/calendar.delete
+    events:
+      - http:
+          path: /api/calendar/schedules/{id}
+          method: delete
+          cors: true
+          authorizer:
+            name: authorizerFunc
+            type: request
+
+  # Voice to Text
+  transcribeAudio:
+    handler: dist/lambda/voice.transcribe
+    timeout: 60
+    memorySize: 1024
+    events:
+      - http:
+          path: /api/voice/transcribe
+          method: post
+          cors: true
+          authorizer:
+            name: authorizerFunc
+            type: request
+
+  # AWS Services
+  translateText:
+    handler: dist/lambda/aws.translate
+    events:
+      - http:
+          path: /aws/translate
+          method: post
+          cors: true
+          authorizer:
+            name: authorizerFunc
+            type: request
+
+  # History
+  getHistory:
+    handler: dist/lambda/history.get
+    events:
+      - http:
+          path: /aws/history/{userId}
+          method: get
+          cors: true
+          authorizer:
+            name: authorizerFunc
+            type: request
+
+  saveHistory:
+    handler: dist/lambda/history.save
+    events:
+      - http:
+          path: /aws/history
+          method: post
+          cors: true
+          authorizer:
+            name: authorizerFunc
+            type: request
+
+  # JWT Authorizer
+  authorizerFunc:
+    handler: dist/lambda/authorizer.handler
+
+# DynamoDB Tables
+resources:
+  Resources:
+    # Users Table
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-users-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: email
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: EmailIndex
+            KeySchema:
+              - AttributeName: email
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
+    # Calendar Table
+    CalendarTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-calendar-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: scheduleId
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: scheduleId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: UserIdIndex
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
+    # History Table
+    HistoryTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-history-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: historyId
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: timestamp
+            AttributeType: N
+        KeySchema:
+          - AttributeName: historyId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: UserIdTimestampIndex
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+              - AttributeName: timestamp
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+
+    # Personas Table
+    PersonasTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-personas-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: personaId
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: personaId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: UserIdIndex
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
+    # S3 Bucket for storage
+    StorageBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:service}-storage-${self:provider.stage}
+        CorsConfiguration:
+          CorsRules:
+            - AllowedOrigins:
+                - '*'
+              AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - DELETE
+              AllowedHeaders:
+                - '*'
+
+    # S3 Bucket for frontend
+    FrontendBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:service}-frontend-${self:provider.stage}
+        WebsiteConfiguration:
+          IndexDocument: index.html
+          ErrorDocument: index.html
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: false
+          BlockPublicPolicy: false
+          IgnorePublicAcls: false
+          RestrictPublicBuckets: false
+
+    # S3 Bucket Policy for frontend
+    FrontendBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref FrontendBucket
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Principal: '*'
+              Action: 's3:GetObject'
+              Resource: !Sub '${FrontendBucket.Arn}/*'
+
+# Plugins
+plugins:
+  - serverless-offline
+  - serverless-plugin-typescript
+
+# Package configuration
+package:
+  individually: true
+  patterns:
+    - '!node_modules/**'
+    - '!.git/**'
+    - '!.vscode/**'
+    - '!test/**'
+    - '!*.md'
+
+custom:
+  serverless-offline:
+    httpPort: 3001
