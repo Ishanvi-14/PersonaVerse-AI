@@ -25,6 +25,10 @@ run:
       value: "8080"
     - name: AWS_REGION
       value: "ap-south-1"
+    - name: AWS_ACCESS_KEY_ID
+      value: "AKIA27CKQTL32J6VKTUI"
+    - name: AWS_SECRET_ACCESS_KEY
+      value: "FSc5sXEczySXnCcdfaCqOWIpap/CS0GJlzwR7QU8kKqDykQ1tXMDUFmlUN7PmbTaE9pu3jsnYhRAoNxf"
     - name: S3_BUCKET_NAME
       value: "aib-3-bucket"
     - name: DYNAMODB_TABLE_HISTORY
@@ -36,7 +40,7 @@ run:
     - name: DYNAMODB_TABLE_CALENDAR
       value: "personaverse-calendar"
     - name: JWT_SECRET
-      value: "personaverse-secret-key-prod-2026"
+      value: "de45a6458abdf743135ac890fecfc9e00278703643dc169098aca4b1d90ccbb3b5f816ef06e4bffae2b3cee35d6236f02a3aad368f963b737345d6f1fdad03e1"
     - name: USE_GROQ
       value: "true"
     - name: ENABLE_VOICE_TO_TEXT
