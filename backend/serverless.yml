@@ -78,13 +78,7 @@ provider:
             - comprehend:DetectDominantLanguage
           Resource: '*'
         
-        # SSM Parameter Store
-        - Effect: Allow
-          Action:
-            - ssm:GetParameter
-            - ssm:GetParameters
-          Resource:
-            - arn:aws:ssm:${self:provider.region}:*:parameter/personaverse/${self:provider.stage}/*
+
 
   # API Gateway configuration
   apiGateway:
@@ -380,7 +374,6 @@ resources:
 # Plugins
 plugins:
   - serverless-offline
-  - serverless-plugin-typescript
 
 # Package configuration
 package:
