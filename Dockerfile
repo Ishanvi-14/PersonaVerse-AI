@@ -11,8 +11,9 @@ RUN npm run build
 # Build backend
 WORKDIR /app/backend
 COPY backend/package*.json ./
-RUN npm ci --only=production
+RUN npm ci
 COPY backend/ ./
+RUN npm run build
 
 # Production stage
 FROM node:20-alpine
@@ -33,5 +34,5 @@ EXPOSE 8080
 ENV NODE_ENV=production
 ENV PORT=8080
 
-# Start server
-CMD ["node", "server.js"]
+# Start server (compiled JS from dist folder)
+CMD ["node", "dist/server.js"]

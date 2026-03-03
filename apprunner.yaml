@@ -8,13 +8,13 @@ build:
     build:
       - echo "Building frontend..."
       - cd frontend && npm ci && npm run build
-      - echo "Installing backend dependencies..."
-      - cd ../backend && npm ci --only=production
+      - echo "Installing backend dependencies and building..."
+      - cd ../backend && npm ci && npm run build
     post-build:
       - echo "Build complete"
 run:
   runtime-version: 20
-  command: node server.js
+  command: node dist/server.js
   network:
     port: 8080
     env: PORT
