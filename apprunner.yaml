@@ -21,3 +21,27 @@ run:
   env:
     - name: NODE_ENV
       value: "production"
+    - name: PORT
+      value: "8080"
+    - name: AWS_REGION
+      value: "ap-south-1"
+    - name: S3_BUCKET_NAME
+      value: "aib-3-bucket"
+    - name: DYNAMODB_TABLE_HISTORY
+      value: "personaverse-user-history"
+    - name: DYNAMODB_TABLE_PERSONAS
+      value: "personaverse-personas"
+    - name: DYNAMODB_TABLE_USERS
+      value: "personaverse-users"
+    - name: DYNAMODB_TABLE_CALENDAR
+      value: "personaverse-calendar"
+    - name: JWT_SECRET
+      value: "personaverse-secret-key-prod-2026"
+    - name: USE_GROQ
+      value: "true"
+    - name: ENABLE_VOICE_TO_TEXT
+      value: "true"
+    - name: ENABLE_MULTILINGUAL
+      value: "true"
+    - name: ENABLE_HISTORY_STORAGE
+      value: "true"
