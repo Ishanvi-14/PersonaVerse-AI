@@ -1,5 +1,7 @@
 import express, { Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
+import * as path from 'path';
+import * as fs from 'fs';
 import { PersonaService } from '../services/persona-engine/personaService';
 import { AdaptiveWrapper } from '../engines/adaptiveWrapper';
 import { UserMemory } from '../memory/userMemory';
@@ -204,8 +206,14 @@ export function createApp(config: AdaptiveConfig): express.Application {
   app.use(express.json());
   app.use(cookieParser());
   
-  // Serve static files from public directory
-  app.use(express.static('public'));
+  // Serve static files from public directory (use absolute path)
+  const publicPath = path.join(__dirname, '..', 'public');
+  if (fs.existsSync(publicPath)) {
+    app.use(express.static(publicPath));
+    console.log(`📁 Serving static files from: ${publicPath}`);
+  } else {
+    console.warn(`⚠️  Public directory not found at: ${publicPath}`);
+  }
   
   // CORS for frontend (Bharat-first: support local development)
   app.use((req, res, next) => {

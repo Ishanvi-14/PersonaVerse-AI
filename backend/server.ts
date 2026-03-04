@@ -23,7 +23,29 @@ import * as path from 'path';
 
 // Load configuration
 const configPath = path.join(__dirname, 'config', 'adaptive.config.json');
-const config: AdaptiveConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+let config: AdaptiveConfig;
+try {
+  config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+} catch (error) {
+  console.warn('⚠️  Could not load adaptive.config.json, using defaults');
+  config = {
+    features: {
+      enable_audience_engine: true,
+      enable_domain_engine: true,
+      enable_engagement_scoring: true,
+      enable_retry_loop: true,
+      enable_memory_system: true
+    },
+    bedrock: {
+      use_mocks: true,
+      model_id: 'anthropic.claude-v2'
+    },
+    thresholds: {
+      engagement_score_threshold: 0.7,
+      max_retry_attempts: 3
+    }
+  };
+}
 
 console.log('='.repeat(60));
 console.log('PersonaVerse Adaptive Intelligence Server');
