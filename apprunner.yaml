@@ -10,6 +10,9 @@ build:
     build:
       - echo "Building frontend..."
       - cd /app/frontend && npm run build
+      - echo "Copying frontend build to backend public directory..."
+      - mkdir -p /app/backend/public
+      - cp -r /app/frontend/dist/* /app/backend/public/
       - echo "Building backend..."
       - cd /app/backend && npm run build
     post-build:
