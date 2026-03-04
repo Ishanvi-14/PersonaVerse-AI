@@ -348,5 +348,15 @@ export function createApp(config: AdaptiveConfig): express.Application {
     });
   });
 
+  // Serve frontend for all other routes (SPA catch-all)
+  app.get('*', (req, res) => {
+    const indexPath = path.join(__dirname, '..', 'public', 'index.html');
+    if (fs.existsSync(indexPath)) {
+      res.sendFile(indexPath);
+    } else {
+      res.status(404).send('Frontend not found. Please build the frontend first.');
+    }
+  });
+
   return app;
 }
