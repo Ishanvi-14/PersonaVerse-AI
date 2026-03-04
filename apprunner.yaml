@@ -1,5 +1,5 @@
 version: 1.0
-runtime: nodejs18
+runtime: nodejs22
 build:
   commands:
     pre-build:
@@ -38,7 +38,7 @@ run:
     - name: DYNAMODB_TABLE_CALENDAR
       value: "personaverse-calendar"
     - name: JWT_SECRET
-      value: "personaverse-secret-key-prod-2026"
+      value: "de45a6458abdf743135ac890fecfc9e00278703643dc169098aca4b1d90ccbb3b5f816ef06e4bffae2b3cee35d6236f02a3aad368f963b737345d6f1fdad03e1"
     - name: USE_GROQ
       value: "true"
     - name: ENABLE_VOICE_TO_TEXT
