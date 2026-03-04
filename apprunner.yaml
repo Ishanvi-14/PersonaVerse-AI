@@ -8,9 +8,9 @@ build:
       - cd ../backend && npm ci
     build:
       - echo "Building frontend..."
-      - cd frontend && npx vite build
+      - cd frontend && npm ci && npm run build
       - echo "Building backend..."
-      - cd ../backend && npx tsc
+      - cd ../backend && npm ci && npm run build
     post-build:
       - echo "Build complete"
       - ls -la backend/dist
