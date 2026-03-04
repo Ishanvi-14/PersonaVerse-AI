@@ -1,18 +1,20 @@
 # Production Dockerfile for AWS App Runner
 FROM node:20-alpine AS builder
 
+# Set working directory
+WORKDIR /app
+
+# Copy all files
+COPY . .
+
 # Build frontend
 WORKDIR /app/frontend
-COPY frontend/package*.json ./
 RUN npm ci --only=production
-COPY frontend/ ./
 RUN npm run build
 
 # Build backend
 WORKDIR /app/backend
-COPY backend/package*.json ./
 RUN npm ci
-COPY backend/ ./
 RUN npm run build
 
 # Production stage
