@@ -16,7 +16,7 @@ build:
       - echo "Build complete"
       - ls -la /app/backend/dist
 run:
-  command: cd /app/backend && node dist/server.js
+  command: node /app/backend/dist/server.js
   network:
     port: 8080
   env:
