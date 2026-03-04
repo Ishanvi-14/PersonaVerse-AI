@@ -23,6 +23,7 @@
     "node_modules",
     "dist",
     "infrastructure",
-    "**/__mocks__/**"
+    "**/__mocks__/**",
+    "lambda"
   ]
 }
