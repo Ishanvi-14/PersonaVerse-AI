@@ -38,7 +38,8 @@ try {
     },
     bedrock: {
       use_mocks: true,
-      model_id: 'anthropic.claude-v2'
+      model_id: 'anthropic.claude-v2',
+      region: 'ap-south-1'
     },
     thresholds: {
       engagement_score_threshold: 0.7,
