@@ -16,8 +16,15 @@ build:
       - echo "Building backend..."
       - cd /app/backend && npm run build
     post-build:
-      - echo "Build complete"
+      - echo "Build complete - verifying file locations..."
+      - echo "Backend dist contents:"
       - ls -la /app/backend/dist
+      - echo "Backend public directory:"
+      - ls -la /app/backend/public || echo "No /app/backend/public directory"
+      - echo "Root public directory:"
+      - ls -la /app/public || echo "No /app/public directory"
+      - echo "Checking for index.html:"
+      - find /app -name "index.html" -type f 2>/dev/null || echo "No index.html found"
 run:
   command: node /app/backend/dist/server.js
   network:
