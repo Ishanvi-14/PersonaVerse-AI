@@ -1,6 +1,10 @@
 /**
  * Authentication Service
  * Handles user registration, login, and password management
+ * 
+ * Supports two modes:
+ * - DynamoDB mode (production with valid AWS credentials)
+ * - Mock mode (demo/development without AWS dependencies)
  */
 
 import bcrypt from 'bcryptjs';
@@ -9,10 +13,22 @@ import { DynamoDBDocumentClient, PutCommand, GetCommand, QueryCommand } from '@a
 import { v4 as uuidv4 } from 'uuid';
 import { generateToken } from '../../middleware/auth.middleware';
 
+// Enable mock mode if AWS credentials are not properly configured
+const USE_MOCK_AUTH = process.env.USE_MOCK_AUTH === 'true' || !process.env.AWS_ACCESS_KEY_ID;
+
+// In-memory user store for mock mode
+const mockUsers: Map<string, User> = new Map();
+
 const client = new DynamoDBClient({ region: process.env.AWS_REGION || 'ap-south-1' });
 const docClient = DynamoDBDocumentClient.from(client);
 
 const USERS_TABLE = process.env.DYNAMODB_TABLE_USERS || 'personaverse-users';
+
+if (USE_MOCK_AUTH) {
+  console.log('🔓 Auth Service: Using MOCK mode (no DynamoDB)');
+} else {
+  console.log('🔐 Auth Service: Using DynamoDB mode');
+}
 
 export interface User {
   userId: string;
@@ -72,14 +88,20 @@ export class AuthService {
       updatedAt: now,
     };
 
-    // Save to DynamoDB
-    await docClient.send(
-      new PutCommand({
-        TableName: USERS_TABLE,
-        Item: user,
-        ConditionExpression: 'attribute_not_exists(email)',
-      })
-    );
+    if (USE_MOCK_AUTH) {
+      // Mock mode: Store in memory
+      mockUsers.set(email.toLowerCase(), user);
+      console.log(`✓ Mock user registered: ${email}`);
+    } else {
+      // DynamoDB mode: Save to database
+      await docClient.send(
+        new PutCommand({
+          TableName: USERS_TABLE,
+          Item: user,
+          ConditionExpression: 'attribute_not_exists(email)',
+        })
+      );
+    }
 
     // Generate token
     const token = generateToken(userId, email);
@@ -126,6 +148,12 @@ export class AuthService {
    * Get user by email
    */
   private static async getUserByEmail(email: string): Promise<User | null> {
+    if (USE_MOCK_AUTH) {
+      // Mock mode: Get from memory
+      return mockUsers.get(email.toLowerCase()) || null;
+    }
+
+    // DynamoDB mode: Query database
     try {
       const result = await docClient.send(
         new QueryCommand({
@@ -141,7 +169,7 @@ export class AuthService {
       return result.Items?.[0] as User || null;
     } catch (error) {
       console.error('Error getting user by email:', error);
-      return null;
+      throw error;
     }
   }
 
@@ -149,6 +177,18 @@ export class AuthService {
    * Get user by ID
    */
   static async getUserById(userId: string): Promise<Omit<User, 'passwordHash'> | null> {
+    if (USE_MOCK_AUTH) {
+      // Mock mode: Search in memory
+      for (const user of mockUsers.values()) {
+        if (user.userId === userId) {
+          const { passwordHash: _, ...userWithoutPassword } = user;
+          return userWithoutPassword;
+        }
+      }
+      return null;
+    }
+
+    // DynamoDB mode: Get from database
     try {
       const result = await docClient.send(
         new GetCommand({
