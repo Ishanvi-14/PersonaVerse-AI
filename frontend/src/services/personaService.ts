@@ -12,7 +12,7 @@ import type {
   ApiResponse,
 } from '@backend/shared/persona.types'
 
-const API_BASE_URL = 'http://localhost:3001';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 class PersonaService {
   private mockPersonas: PersonaLayer[] = [

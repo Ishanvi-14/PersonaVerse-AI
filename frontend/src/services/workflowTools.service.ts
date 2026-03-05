@@ -5,7 +5,7 @@
  * Handles all HTTP communication with the backend workflow tools endpoints.
  */
 
-const API_BASE_URL = 'http://localhost:3001';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 // ============================================================================
 // Type Definitions
