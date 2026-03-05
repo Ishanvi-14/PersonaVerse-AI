@@ -11,6 +11,8 @@
 import React, { useState, useRef } from 'react';
 import { Mic, Globe, History, User, Sparkles, Languages, Brain } from 'lucide-react';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
 interface Language {
   code: string;
   name: string;
@@ -106,7 +108,7 @@ export function AWSPoweredDashboard() {
       formData.append('targetLanguage', targetLanguage);
       formData.append('autoDetectLanguage', 'true');
 
-      const response = await fetch('http://localhost:3001/aws/voice-to-content', {
+      const response = await fetch(`${API_BASE_URL}/aws/voice-to-content`, {
         method: 'POST',
         body: formData
       });
@@ -134,7 +136,7 @@ export function AWSPoweredDashboard() {
 
     setIsProcessing(true);
     try {
-      const response = await fetch('http://localhost:3001/aws/generate', {
+      const response = await fetch(`${API_BASE_URL}/aws/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -167,7 +169,7 @@ export function AWSPoweredDashboard() {
   // Load user history
   const loadUserHistory = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/aws/history/${userId}`);
+      const response = await fetch(`${API_BASE_URL}/aws/history/${userId}`);
       const result = await response.json();
       
       if (result.success) {
@@ -181,7 +183,7 @@ export function AWSPoweredDashboard() {
   // Load user profile
   const loadUserProfile = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/aws/profile/${userId}`);
+      const response = await fetch(`${API_BASE_URL}/aws/profile/${userId}`);
       const result = await response.json();
       
       if (result.success) {

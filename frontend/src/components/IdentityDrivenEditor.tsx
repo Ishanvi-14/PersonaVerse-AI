@@ -13,6 +13,8 @@ import {
 } from 'lucide-react'
 import type { PersonaLayer, GenerationResponse, SupportedPlatform } from '@backend/shared/persona.types'
 import { personaService } from '../services/personaService'
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 import { cn, getPersonaColor, getPlatformIcon } from '../lib/utils'
 import { VoiceInput } from './VoiceInput'
 import { DownloadAsImage } from '../features/distribution/DownloadAsImage'
@@ -120,7 +122,7 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
 
     setIsTranslating(true)
     try {
-      const response = await fetch('http://localhost:3001/aws/translate', {
+      const response = await fetch(`${API_BASE_URL}/aws/translate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -148,7 +150,7 @@ export function IdentityDrivenEditor({ className = '' }: IdentityDrivenEditorPro
     }
 
     try {
-      await fetch('http://localhost:3001/aws/history', {
+      await fetch(`${API_BASE_URL}/aws/history`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

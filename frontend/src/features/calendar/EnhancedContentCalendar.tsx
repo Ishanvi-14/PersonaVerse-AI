@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
 type ContentStatus = 'scheduled' | 'posted' | 'draft';
 type Platform = 'linkedin' | 'instagram' | 'twitter' | 'facebook' | 'youtube';
 
@@ -92,7 +94,7 @@ export const EnhancedContentCalendar: React.FC = () => {
 
   const loadSchedules = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/calendar/schedules', {
+      const response = await fetch(`${API_BASE_URL}/api/calendar/schedules`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -113,8 +115,8 @@ export const EnhancedContentCalendar: React.FC = () => {
 
     try {
       const url = editingSchedule
-        ? `http://localhost:3001/api/calendar/schedules/${editingSchedule.scheduleId}`
-        : 'http://localhost:3001/api/calendar/schedule';
+        ? `${API_BASE_URL}/api/calendar/schedules/${editingSchedule.scheduleId}`
+        : `${API_BASE_URL}/api/calendar/schedule`;
 
       const method = editingSchedule ? 'PUT' : 'POST';
 
@@ -150,7 +152,7 @@ export const EnhancedContentCalendar: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3001/api/calendar/schedules/${scheduleId}`,
+        `${API_BASE_URL}/api/calendar/schedules/${scheduleId}`,
         {
           method: 'DELETE',
           headers: {

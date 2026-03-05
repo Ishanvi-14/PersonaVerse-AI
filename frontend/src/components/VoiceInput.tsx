@@ -14,6 +14,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Mic, Loader2 } from 'lucide-react';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
 interface VoiceInputProps {
   onTranscript: (text: string) => void;
   onError?: (error: string) => void;
@@ -146,7 +148,7 @@ export const VoiceInput: React.FC<VoiceInputProps> = ({
         console.log(`[VoiceInput] Sending audio to AWS Transcribe (${language})`);
 
         // Send to AWS Transcribe endpoint
-        const response = await fetch('http://localhost:3001/aws/transcribe', {
+        const response = await fetch(`${API_BASE_URL}/aws/transcribe`, {
           method: 'POST',
           body: formData,
         });
@@ -188,7 +190,7 @@ export const VoiceInput: React.FC<VoiceInputProps> = ({
 
     const saveTranscriptionToHistory = async (transcript: string, lang: string) => {
       try {
-        await fetch('http://localhost:3001/aws/history', {
+        await fetch(`${API_BASE_URL}/aws/history`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

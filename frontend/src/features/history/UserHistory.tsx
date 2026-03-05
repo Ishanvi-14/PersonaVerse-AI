@@ -13,6 +13,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, User, Target, TrendingUp, Download, Filter } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
 interface HistoryEntry {
   entryId: string;
   userId: string;
@@ -58,7 +60,7 @@ export function UserHistory() {
     setError(null);
     
     try {
-      const response = await fetch(`http://localhost:3001/aws/history/${user.userId}`);
+      const response = await fetch(`${API_BASE_URL}/aws/history/${user.userId}`);
       const data = await response.json();
 
       if (data.success) {
