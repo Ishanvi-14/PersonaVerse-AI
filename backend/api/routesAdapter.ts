@@ -207,12 +207,27 @@ export function createApp(config: AdaptiveConfig): express.Application {
   app.use(cookieParser());
   
   // Serve static files from public directory (use absolute path)
-  const publicPath = path.join(__dirname, '..', 'public');
-  if (fs.existsSync(publicPath)) {
+  // Try multiple possible locations for frontend files
+  const possiblePaths = [
+    path.join(__dirname, '..', 'public'),           // /app/backend/dist/../public -> /app/backend/public
+    path.join(__dirname, '..', '..', 'public'),     // /app/backend/dist/../../public -> /app/public
+    '/app/backend/public',                           // Absolute path for App Runner
+    '/app/public'                                    // Absolute path for Docker
+  ];
+  
+  let publicPath: string | null = null;
+  for (const testPath of possiblePaths) {
+    if (fs.existsSync(testPath)) {
+      publicPath = testPath;
+      break;
+    }
+  }
+  
+  if (publicPath) {
     app.use(express.static(publicPath));
     console.log(`📁 Serving static files from: ${publicPath}`);
   } else {
-    console.warn(`⚠️  Public directory not found at: ${publicPath}`);
+    console.warn(`⚠️  Public directory not found. Tried paths:`, possiblePaths);
   }
   
   // CORS for frontend (Bharat-first: support local development)
@@ -350,11 +365,26 @@ export function createApp(config: AdaptiveConfig): express.Application {
 
   // Serve frontend for all other routes (SPA catch-all)
   app.get('*', (req, res) => {
-    const indexPath = path.join(__dirname, '..', 'public', 'index.html');
-    if (fs.existsSync(indexPath)) {
+    // Try multiple possible locations for index.html
+    const possibleIndexPaths = [
+      path.join(__dirname, '..', 'public', 'index.html'),
+      path.join(__dirname, '..', '..', 'public', 'index.html'),
+      '/app/backend/public/index.html',
+      '/app/public/index.html'
+    ];
+    
+    let indexPath: string | null = null;
+    for (const testPath of possibleIndexPaths) {
+      if (fs.existsSync(testPath)) {
+        indexPath = testPath;
+        break;
+      }
+    }
+    
+    if (indexPath) {
       res.sendFile(indexPath);
     } else {
-      res.status(404).send('Frontend not found. Please build the frontend first.');
+      res.status(404).send(`Frontend not found. Tried paths: ${possibleIndexPaths.join(', ')}`);
     }
   });
 
