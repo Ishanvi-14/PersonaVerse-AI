@@ -35,7 +35,7 @@ run:
     - name: PORT
       value: "8080"
     - name: USE_MOCK_AUTH
-      value: "true"
+      value: "false"
     - name: AWS_REGION
       value: "ap-south-1"
     - name: AWS_ACCESS_KEY_ID
