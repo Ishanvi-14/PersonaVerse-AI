@@ -39,9 +39,9 @@ run:
     - name: AWS_REGION
       value: "ap-south-1"
     - name: AWS_ACCESS_KEY_ID
-      value: "AKIA27CKQTL32J6VKTUI"
+      value: "AKIA27CKQTL36VFXE5ET"
     - name: AWS_SECRET_ACCESS_KEY
-      value: "FSc5sXEczySXnCcdfaCqOWIpap/CS0GJlzwR7QU8kKqDykQ1tXMDUFmlUN7PmbTaE9pu3jsnYhRAoNxf"
+      value: "1gt+uWTnGvatjCwKcy+2QKnECarl0BmWYMMKijQM"
     - name: S3_BUCKET_NAME
       value: "aib-3-bucket"
     - name: DYNAMODB_TABLE_HISTORY
