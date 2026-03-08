@@ -62,3 +62,5 @@ run:
       value: "true"
     - name: ENABLE_HISTORY_STORAGE
       value: "true"
+    - name: GROQ_API_KEY
+      value: "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"
